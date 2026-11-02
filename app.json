@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "animenest",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
       "bundleIdentifier": "com.smp.animenest",
       "icon": "./assets/images/icon.png"
@@ -34,7 +34,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
