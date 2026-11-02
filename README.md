@@ -1,18 +1,32 @@
 # AnimeNest
 
-AnimeNest is a cross-platform mobile app (iOS, Android, web) for discovering anime. It uses the [AniList](https://anilist.co) API to browse anime lists and view anime details, and lets you build your own watch list.
+AnimeNest is a cross-platform mobile app (iOS, Android, web) for discovering anime. It uses the [AniList](https://anilist.co) GraphQL API to browse anime lists and view anime details, and lets you build your own watchlist.
 
-Built with [Expo](https://expo.dev), React Native and [Expo Router](https://docs.expo.dev/router/introduction).
+Built with [Expo](https://expo.dev) (SDK 58), React Native and [Expo Router](https://docs.expo.dev/router/introduction).
+
+## Screenshots
+
+| Home | Search | Details |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" width="240" alt="Home feed" /> | <img src="docs/screenshots/search.png" width="240" alt="Search and filters" /> | <img src="docs/screenshots/detail.png" width="240" alt="Anime details" /> |
+| **Characters & cast** | **Watchlist** | **Profile** |
+| <img src="docs/screenshots/characters.png" width="240" alt="Characters and voice actors" /> | <img src="docs/screenshots/library.png" width="240" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="240" alt="Profile stats" /> |
 
 ## Features
 
-- Browse anime lists powered by the [AniList GraphQL API](https://docs.anilist.co/)
-- View detailed information for each anime
-- Create and manage a personal watch list
+- **Home feed:** trending this season carousel, top airing now and all-time popular rows
+- **Search:** debounced search with All Types, TV, Movie and Top Rated filters
+- **Details:** banner, score, rank, synopsis, genres and info, with Overview, Characters (Japanese voice actors, recommendations) and Related tabs
+- **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, and track episode progress. Stored on the device (SQLite on native, `localStorage` on web)
+- **Profile:** simple stats from your watchlist
+- Dark theme, pull to refresh, loading / error / empty states
 
-- **Bundle / package ID:** `com.smp.animenest`
-- **URL scheme:** `animenest://`
-- **Expo SDK:** 58
+## Tech stack
+
+- Expo SDK 58, React Native 0.88, React 19, TypeScript
+- Expo Router (file-based routing, native tabs)
+- AniList GraphQL API (`https://graphql.anilist.co`), no API key needed
+- `expo-sqlite` key-value store for the watchlist, `expo-image` for images
 
 ## Get started
 
@@ -27,6 +41,8 @@ Built with [Expo](https://expo.dev), React Native and [Expo Router](https://docs
    ```bash
    npx expo start
    ```
+
+`expo-sqlite` is a native module, so use a development build rather than Expo Go (see below).
 
 ## Run on a device or simulator
 
@@ -46,15 +62,40 @@ To regenerate the native projects after changing `app.json`, icons or plugins:
 npx expo prebuild --clean
 ```
 
+### Build an Android APK locally
+
+With the Android SDK installed (`ANDROID_HOME` set):
+
+```bash
+npx expo prebuild --platform android
+cd android && ./gradlew assembleRelease
+# android/app/build/outputs/apk/release/app-release.apk
+```
+
+The template signs release builds with the debug keystore, which is fine for sideloading but not for Google Play.
+
 ## Project structure
 
 ```
 src/
-  app/          Routes (file-based routing; _layout.tsx defines navigators)
-  components/   Shared UI components
-  constants/    Theme and other constants
-  hooks/        Custom hooks
-assets/images/  App icon, adaptive icon, splash and favicon
+  app/                    Routes only (file-based routing)
+    _layout.tsx           Root stack and theme
+    (tabs)/               Home, Search, Library, Profile
+    anime/[id].tsx        Anime detail screen
+  components/
+    ui/                   Shared building blocks (button, chip, tag, states, icon...)
+    screen.tsx            Safe-area page wrapper
+    app-header.tsx        Brand header
+    app-tabs.tsx          Native tab bar (app-tabs.web.tsx for web)
+  features/
+    anime/                AniList API client and queries, types, formatters,
+                          data hooks and anime components
+    watchlist/            Storage, store, hooks and watchlist components
+  hooks/                  Generic hooks (use-async, use-debounced-value, use-theme)
+  lib/                    Small helpers (navigation)
+  constants/theme.ts      Colors and spacing
+docs/screenshots/         README screenshots
+assets/images/            App icon, adaptive icon, splash and favicon
 ```
 
 Keep non-route code outside `src/app/`.
@@ -69,8 +110,12 @@ npx eas-cli@latest submit
 npx eas-cli@latest update
 ```
 
+## Credits
+
+Anime data is provided by [AniList](https://anilist.co).
+
 ## Learn more
 
 - [Expo documentation](https://docs.expo.dev/)
 - [Expo Router](https://docs.expo.dev/router/introduction)
-- [Development builds](https://docs.expo.dev/develop/development-builds/introduction/)
+- [AniList API docs](https://docs.anilist.co/)
