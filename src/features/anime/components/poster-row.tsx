@@ -2,7 +2,7 @@ import { FlatList, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { Poster } from '@/features/anime/components/poster';
-import type { AnimeSummary } from '@/features/anime/types';
+import type { PosterItem } from '@/features/anime/types';
 
 function Separator() {
   return <View style={{ width: Spacing.two }} />;
@@ -11,9 +11,11 @@ function Separator() {
 export function PosterRow({
   items,
   ranked,
+  hideRating,
 }: {
-  items: AnimeSummary[];
+  items: PosterItem[];
   ranked?: boolean;
+  hideRating?: boolean;
 }) {
   return (
     <FlatList
@@ -22,7 +24,11 @@ export function PosterRow({
       data={items}
       keyExtractor={i => String(i.id)}
       renderItem={({ item, index }) => (
-        <Poster anime={item} rank={ranked ? index + 1 : undefined} />
+        <Poster
+          anime={item}
+          rank={ranked ? index + 1 : undefined}
+          hideRating={hideRating}
+        />
       )}
       ItemSeparatorComponent={Separator}
     />

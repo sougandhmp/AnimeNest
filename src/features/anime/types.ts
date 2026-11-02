@@ -72,3 +72,11 @@ export type AnimeDetail = AnimeSummary & {
   relations: { edges: RelatedMedia[] };
   recommendations: { nodes: Recommendation[] };
 };
+
+/** The few fields a poster tile needs; used by the lightweight home rows. */
+export type PosterItem = {
+  id: number;
+  title: Title;
+  coverImage: { large: string | null; color: string | null };
+  averageScore: number | null;
+};

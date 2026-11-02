@@ -17,9 +17,11 @@ type Props = {
   };
   width?: number;
   rank?: number;
+  /** Hide the rating badge (e.g. unreleased titles, which have no score yet). */
+  hideRating?: boolean;
 };
 
-export function Poster({ anime, width = 120, rank }: Props) {
+export function Poster({ anime, width = 120, rank, hideRating }: Props) {
   return (
     <Pressable
       onPress={() => openAnime(anime.id)}
@@ -42,7 +44,7 @@ export function Poster({ anime, width = 120, rank }: Props) {
           <View style={styles.badge}>
             <ThemedText type="smallBold">#{rank}</ThemedText>
           </View>
-        ) : (
+        ) : hideRating ? null : (
           <View style={styles.badge}>
             <Rating score={anime.averageScore} size="sm" />
           </View>
