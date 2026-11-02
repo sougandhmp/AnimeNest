@@ -6,16 +6,18 @@ Built with [Expo](https://expo.dev) (SDK 58), React Native and [Expo Router](htt
 
 ## Screenshots
 
-| Home | Search | Details |
-| :---: | :---: | :---: |
-| <img src="docs/screenshots/home.png" width="240" alt="Home feed" /> | <img src="docs/screenshots/search.png" width="240" alt="Search and filters" /> | <img src="docs/screenshots/detail.png" width="240" alt="Anime details" /> |
-| **Characters & cast** | **Watchlist** | **Profile** |
-| <img src="docs/screenshots/characters.png" width="240" alt="Characters and voice actors" /> | <img src="docs/screenshots/library.png" width="240" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="240" alt="Profile stats" /> |
+| Home | Schedule | Search by genre | Details |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" width="190" alt="Home feed" /> | <img src="docs/screenshots/schedule.png" width="190" alt="Airing schedule" /> | <img src="docs/screenshots/search.png" width="190" alt="Search with genre filter" /> | <img src="docs/screenshots/detail.png" width="190" alt="Anime details" /> |
+| **Characters & cast** | **Watchlist** | **Profile** | |
+| <img src="docs/screenshots/characters.png" width="190" alt="Characters and voice actors" /> | <img src="docs/screenshots/library.png" width="190" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="190" alt="Profile stats" /> | |
 
 ## Features
 
 - **Home feed:** trending this season carousel, top airing now and all-time popular rows
-- **Search:** debounced search with All Types, TV, Movie and Top Rated filters
+- **Airing schedule:** the next 7 days of episodes, grouped by day with air times, plus a "next episode" countdown on each anime
+- **Genre browsing:** genre chips on Home and Search, and tappable genre tags on the detail screen
+- **Search:** debounced search with All Types, TV, Movie and Top Rated filters, combinable with a genre
 - **Details:** banner, score, rank, synopsis, genres and info, with Overview, Characters (Japanese voice actors, recommendations) and Related tabs
 - **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, and track episode progress. Stored on the device (SQLite on native, `localStorage` on web)
 - **Profile:** simple stats from your watchlist
@@ -80,7 +82,7 @@ The template signs release builds with the debug keystore, which is fine for sid
 src/
   app/                    Routes only (file-based routing)
     _layout.tsx           Root stack and theme
-    (tabs)/               Home, Search, Library, Profile
+    (tabs)/               Home, Schedule, Search, Library, Profile
     anime/[id].tsx        Anime detail screen
   components/
     ui/                   Shared building blocks (button, chip, tag, states, icon...)
@@ -90,6 +92,7 @@ src/
   features/
     anime/                AniList API client and queries, types, formatters,
                           data hooks and anime components
+    schedule/             Airing schedule query, day grouping, hook and row
     watchlist/            Storage, store, hooks and watchlist components
   hooks/                  Generic hooks (use-async, use-debounced-value, use-theme)
   lib/                    Small helpers (navigation)
