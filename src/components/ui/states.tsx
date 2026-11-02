@@ -12,7 +12,13 @@ export function Loading() {
   );
 }
 
-export function ErrorState({ message, onRetry }: { message?: string; onRetry: () => void }) {
+export function ErrorState({
+  message,
+  onRetry,
+}: {
+  message?: string;
+  onRetry: () => void;
+}) {
   return (
     <View style={styles.center}>
       <ThemedText themeColor="textSecondary" style={styles.centerText}>
@@ -28,7 +34,11 @@ export function EmptyState({ title, hint }: { title: string; hint?: string }) {
     <View style={styles.center}>
       <ThemedText type="smallBold">{title}</ThemedText>
       {hint ? (
-        <ThemedText type="small" themeColor="textSecondary" style={styles.centerText}>
+        <ThemedText
+          type="small"
+          themeColor="textSecondary"
+          style={styles.centerText}
+        >
           {hint}
         </ThemedText>
       ) : null}

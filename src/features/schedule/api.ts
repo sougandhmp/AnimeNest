@@ -22,7 +22,11 @@ const SCHEDULE_QUERY = /* GraphQL */ `
       pageInfo {
         hasNextPage
       }
-      airingSchedules(airingAt_greater: $from, airingAt_lesser: $to, sort: TIME) {
+      airingSchedules(
+        airingAt_greater: $from
+        airingAt_lesser: $to
+        sort: TIME
+      ) {
         id
         airingAt
         episode
@@ -57,10 +61,13 @@ export async function fetchSchedule(
   const items: ScheduleItem[] = [];
   for (let page = 1; page <= MAX_PAGES; page++) {
     const data = await anilistQuery<{
-      Page: { pageInfo: { hasNextPage: boolean }; airingSchedules: ScheduleItem[] };
+      Page: {
+        pageInfo: { hasNextPage: boolean };
+        airingSchedules: ScheduleItem[];
+      };
     }>(SCHEDULE_QUERY, { from, to, page }, signal);
     items.push(...data.Page.airingSchedules);
     if (!data.Page.pageInfo.hasNextPage) break;
   }
-  return items.filter((i) => !i.media.isAdult);
+  return items.filter(i => !i.media.isAdult);
 }

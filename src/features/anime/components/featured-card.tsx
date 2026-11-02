@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Linking, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -12,24 +12,37 @@ import { useWatchEntry } from '@/features/watchlist/hooks/use-watchlist';
 import { addToWatchlist } from '@/features/watchlist/store';
 import { openAnime } from '@/lib/navigation';
 
-export function FeaturedCard({ anime, width }: { anime: AnimeSummary; width: number }) {
+export function FeaturedCard({
+  anime,
+  width,
+}: {
+  anime: AnimeSummary;
+  width: number;
+}) {
   const inList = !!useWatchEntry(anime.id);
   const trailer = trailerUrl(anime.trailer);
 
   return (
     <View style={{ width, paddingRight: Spacing.two }}>
-      <Image
-        source={anime.bannerImage ?? anime.coverImage.extraLarge ?? anime.coverImage.large}
+      <RemoteImage
+        uri={
+          anime.bannerImage ??
+          anime.coverImage.extraLarge ??
+          anime.coverImage.large
+        }
         style={styles.image}
-        contentFit="cover"
-        transition={200}
       />
       <View style={styles.overlay}>
-        <ThemedText type="subtitle" numberOfLines={1} style={styles.title} onPress={() => openAnime(anime.id)}>
+        <ThemedText
+          type="subtitle"
+          numberOfLines={1}
+          style={styles.title}
+          onPress={() => openAnime(anime.id)}
+        >
           {displayTitle(anime.title)}
         </ThemedText>
         <View style={styles.row}>
-          {anime.genres.slice(0, 3).map((g) => (
+          {anime.genres.slice(0, 3).map(g => (
             <Tag key={g}>{g}</Tag>
           ))}
           <View style={styles.spacer} />
@@ -38,15 +51,17 @@ export function FeaturedCard({ anime, width }: { anime: AnimeSummary; width: num
         <View style={styles.row}>
           <Button
             label={inList ? 'In List' : 'Add to List'}
-            symbol={inList ? { ios: 'checkmark', android: 'check' } : { ios: 'plus', android: 'add' }}
+            symbol={inList ? 'check' : 'add'}
             onPress={() => addToWatchlist(anime)}
             style={styles.flex}
           />
           <Button
             label="Trailer"
-            symbol={{ ios: 'play.fill', android: 'play_arrow' }}
+            symbol={'play'}
             variant="outline"
-            onPress={() => (trailer ? Linking.openURL(trailer) : openAnime(anime.id))}
+            onPress={() =>
+              trailer ? Linking.openURL(trailer) : openAnime(anime.id)
+            }
             style={styles.flex}
           />
         </View>

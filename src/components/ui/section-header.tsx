@@ -5,7 +5,11 @@ import { Spacing } from '@/constants/theme';
 
 export function SectionHeader({ title }: { title: string }) {
   return (
-    <ThemedText type="smallBold" themeColor="textSecondary" style={styles.header}>
+    <ThemedText
+      type="smallBold"
+      themeColor="textSecondary"
+      style={styles.header}
+    >
       {title.toUpperCase()}
     </ThemedText>
   );

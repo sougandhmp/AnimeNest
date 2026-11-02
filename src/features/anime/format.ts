@@ -17,7 +17,11 @@ export function cleanDescription(html: string | null): string {
 
 export function formatLabel(format: string | null): string | null {
   if (!format) return null;
-  const map: Record<string, string> = { TV_SHORT: 'TV Short', MOVIE: 'Movie', SPECIAL: 'Special' };
+  const map: Record<string, string> = {
+    TV_SHORT: 'TV Short',
+    MOVIE: 'Movie',
+    SPECIAL: 'Special',
+  };
   return map[format] ?? format.replace(/_/g, ' ');
 }
 
@@ -26,24 +30,30 @@ export function titleCase(value: string | null): string {
   return value
     .toLowerCase()
     .split('_')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 }
 
 export function currentSeason(date = new Date()) {
   const m = date.getMonth();
-  const season = m < 3 ? 'WINTER' : m < 6 ? 'SPRING' : m < 9 ? 'SUMMER' : 'FALL';
+  const season =
+    m < 3 ? 'WINTER' : m < 6 ? 'SPRING' : m < 9 ? 'SUMMER' : 'FALL';
   return { season, year: date.getFullYear() };
 }
 
 export function trailerUrl(trailer: AnimeSummary['trailer']): string | null {
   if (!trailer?.id) return null;
-  if (trailer.site === 'youtube') return `https://www.youtube.com/watch?v=${trailer.id}`;
-  if (trailer.site === 'dailymotion') return `https://www.dailymotion.com/video/${trailer.id}`;
+  if (trailer.site === 'youtube')
+    return `https://www.youtube.com/watch?v=${trailer.id}`;
+  if (trailer.site === 'dailymotion')
+    return `https://www.dailymotion.com/video/${trailer.id}`;
   return null;
 }
 
-export function seasonLabel(season: string | null, year: number | null): string | null {
+export function seasonLabel(
+  season: string | null,
+  year: number | null,
+): string | null {
   if (!season || !year) return null;
   return `${titleCase(season)} ${year}`;
 }
@@ -58,7 +68,10 @@ export function formatCountdown(seconds: number): string {
 }
 
 export function formatAirTime(unixSeconds: number): string {
-  return new Date(unixSeconds * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return new Date(unixSeconds * 1000).toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 }
 
 export function formatAirDate(unixSeconds: number): string {

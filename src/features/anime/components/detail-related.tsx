@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -10,15 +10,21 @@ import { openAnime } from '@/lib/navigation';
 const c = Colors.dark;
 
 export function DetailRelated({ anime }: { anime: AnimeDetail }) {
-  const items = anime.relations.edges.filter((e) => e.node.type === 'ANIME');
+  const items = anime.relations.edges.filter(e => e.node.type === 'ANIME');
   if (items.length === 0) {
-    return <ThemedText themeColor="textSecondary">No related anime.</ThemedText>;
+    return (
+      <ThemedText themeColor="textSecondary">No related anime.</ThemedText>
+    );
   }
   return (
     <View style={styles.list}>
-      {items.map((e) => (
-        <Pressable key={e.node.id} onPress={() => openAnime(e.node.id)} style={styles.row}>
-          <Image source={e.node.coverImage.large} style={styles.cover} contentFit="cover" />
+      {items.map(e => (
+        <Pressable
+          key={e.node.id}
+          onPress={() => openAnime(e.node.id)}
+          style={styles.row}
+        >
+          <RemoteImage uri={e.node.coverImage.large} style={styles.cover} />
           <View style={styles.flex}>
             <ThemedText type="small" style={{ color: c.accent }}>
               {titleCase(e.relationType)}
@@ -27,7 +33,9 @@ export function DetailRelated({ anime }: { anime: AnimeDetail }) {
               {displayTitle(e.node.title)}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              {[formatLabel(e.node.format), titleCase(e.node.status)].filter(Boolean).join(' · ')}
+              {[formatLabel(e.node.format), titleCase(e.node.status)]
+                .filter(Boolean)
+                .join(' · ')}
             </ThemedText>
           </View>
         </Pressable>
@@ -47,5 +55,10 @@ const styles = StyleSheet.create({
     backgroundColor: c.backgroundElement,
   },
   flex: { flex: 1 },
-  cover: { width: 52, height: 76, borderRadius: Spacing.one, backgroundColor: c.backgroundSelected },
+  cover: {
+    width: 52,
+    height: 76,
+    borderRadius: Spacing.one,
+    backgroundColor: c.backgroundSelected,
+  },
 });

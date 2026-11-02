@@ -27,7 +27,7 @@ export function WatchlistMenu({ anime }: { anime: AnimeSummary }) {
     return (
       <Button
         label="Add to Watchlist"
-        symbol={{ ios: 'plus', android: 'add' }}
+        symbol={'add'}
         onPress={() => addToWatchlist(anime)}
       />
     );
@@ -35,13 +35,9 @@ export function WatchlistMenu({ anime }: { anime: AnimeSummary }) {
 
   return (
     <View style={styles.container}>
-      <Button
-        label="In your Watchlist"
-        variant="outline"
-        symbol={{ ios: 'checkmark', android: 'check' }}
-      />
+      <Button label="In your Watchlist" variant="outline" symbol={'check'} />
       <View style={styles.statuses}>
-        {STATUSES.map((s) => (
+        {STATUSES.map(s => (
           <Chip
             key={s}
             label={STATUS_LABEL[s]}
@@ -54,7 +50,8 @@ export function WatchlistMenu({ anime }: { anime: AnimeSummary }) {
         onPress={() => removeFromWatchlist(anime.id)}
         accessibilityRole="button"
         hitSlop={8}
-        style={styles.remove}>
+        style={styles.remove}
+      >
         <ThemedText type="small" style={{ color: Colors.dark.danger }}>
           Remove from Watchlist
         </ThemedText>

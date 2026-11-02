@@ -53,7 +53,7 @@ function write(entries: WatchEntry[]) {
     // Storage unavailable: keep the in-memory copy so the session still works.
   }
   cache = { raw, entries };
-  listeners.forEach((l) => l());
+  listeners.forEach(l => l());
 }
 
 export function subscribe(listener: () => void) {
@@ -65,12 +65,18 @@ export function subscribe(listener: () => void) {
 
 export function setStatus(anime: AnimeSummary, status: WatchStatus) {
   const entries = getWatchlist();
-  const existing = entries.find((e) => e.id === anime.id);
+  const existing = entries.find(e => e.id === anime.id);
   const total = anime.episodes;
   const progress =
-    status === 'COMPLETED' && total ? total : status === 'PLANNING' ? 0 : (existing?.progress ?? 0);
+    status === 'COMPLETED' && total
+      ? total
+      : status === 'PLANNING'
+      ? 0
+      : existing?.progress ?? 0;
   if (existing) {
-    write(entries.map((e) => (e.id === anime.id ? { ...e, status, progress } : e)));
+    write(
+      entries.map(e => (e.id === anime.id ? { ...e, status, progress } : e)),
+    );
   } else {
     write([
       {
@@ -90,16 +96,17 @@ export function setStatus(anime: AnimeSummary, status: WatchStatus) {
 }
 
 export function addToWatchlist(anime: AnimeSummary) {
-  if (!getWatchlist().some((e) => e.id === anime.id)) setStatus(anime, 'PLANNING');
+  if (!getWatchlist().some(e => e.id === anime.id))
+    setStatus(anime, 'PLANNING');
 }
 
 export function removeFromWatchlist(id: number) {
-  write(getWatchlist().filter((e) => e.id !== id));
+  write(getWatchlist().filter(e => e.id !== id));
 }
 
 export function changeProgress(id: number, delta: number) {
   write(
-    getWatchlist().map((e) => {
+    getWatchlist().map(e => {
       if (e.id !== id) return e;
       const max = e.episodes ?? Number.POSITIVE_INFINITY;
       const progress = Math.min(max, Math.max(0, e.progress + delta));
@@ -107,10 +114,10 @@ export function changeProgress(id: number, delta: number) {
         e.episodes && progress >= e.episodes
           ? 'COMPLETED'
           : e.status === 'PLANNING' && progress > 0
-            ? 'WATCHING'
-            : e.status === 'COMPLETED' && progress < (e.episodes ?? 0)
-              ? 'WATCHING'
-              : e.status;
+          ? 'WATCHING'
+          : e.status === 'COMPLETED' && progress < (e.episodes ?? 0)
+          ? 'WATCHING'
+          : e.status;
       return { ...e, progress, status };
     }),
   );

@@ -14,8 +14,12 @@ export function Chip({ label, selected, onPress }: Props) {
       accessibilityRole="button"
       hitSlop={6}
       accessibilityState={{ selected }}
-      style={[styles.chip, selected && { backgroundColor: c.accent }]}>
-      <ThemedText type="small" style={{ color: selected ? c.accentText : c.textSecondary }}>
+      style={[styles.chip, selected && { backgroundColor: c.accent }]}
+    >
+      <ThemedText
+        type="small"
+        style={{ color: selected ? c.accentText : c.textSecondary }}
+      >
         {label}
       </ThemedText>
     </Pressable>

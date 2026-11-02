@@ -1,9 +1,11 @@
-import Storage from 'expo-sqlite/kv-store';
+import { createMMKV } from 'react-native-mmkv';
+
+const storage = createMMKV({ id: 'animenest' });
 
 export function getItem(key: string): string | null {
-  return Storage.getItemSync(key);
+  return storage.getString(key) ?? null;
 }
 
 export function setItem(key: string, value: string): void {
-  Storage.setItemSync(key, value);
+  storage.set(key, value);
 }

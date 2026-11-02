@@ -7,5 +7,5 @@ export function useWatchlist() {
 }
 
 export function useWatchEntry(id: number) {
-  return useWatchlist().find((e) => e.id === id);
+  return useWatchlist().find(e => e.id === id);
 }

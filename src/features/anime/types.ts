@@ -3,7 +3,11 @@ export type Title = { romaji: string | null; english: string | null };
 export type AnimeSummary = {
   id: number;
   title: Title;
-  coverImage: { large: string | null; extraLarge?: string | null; color: string | null };
+  coverImage: {
+    large: string | null;
+    extraLarge?: string | null;
+    color: string | null;
+  };
   bannerImage: string | null;
   averageScore: number | null;
   episodes: number | null;
@@ -20,7 +24,11 @@ export type AnimeSummary = {
 export type Character = {
   role: string;
   node: { id: number; name: { full: string }; image: { large: string | null } };
-  voiceActors: { id: number; name: { full: string }; image: { large: string | null } }[];
+  voiceActors: {
+    id: number;
+    name: { full: string };
+    image: { large: string | null };
+  }[];
 };
 
 export type RelatedMedia = {
@@ -36,17 +44,30 @@ export type RelatedMedia = {
 };
 
 export type Recommendation = {
-  mediaRecommendation: { id: number; title: Title; coverImage: { large: string | null } } | null;
+  mediaRecommendation: {
+    id: number;
+    title: Title;
+    coverImage: { large: string | null };
+  } | null;
 };
 
-export type NextAiring = { episode: number; airingAt: number; timeUntilAiring: number };
+export type NextAiring = {
+  episode: number;
+  airingAt: number;
+  timeUntilAiring: number;
+};
 
 export type AnimeDetail = AnimeSummary & {
   nextAiringEpisode: NextAiring | null;
   title: Title & { native: string | null };
   source: string | null;
   popularity: number | null;
-  rankings: { rank: number; type: string; allTime: boolean | null; context: string }[];
+  rankings: {
+    rank: number;
+    type: string;
+    allTime: boolean | null;
+    context: string;
+  }[];
   characters: { edges: Character[] };
   relations: { edges: RelatedMedia[] };
   recommendations: { nodes: Recommendation[] };

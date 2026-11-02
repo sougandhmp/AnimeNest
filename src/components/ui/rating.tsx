@@ -24,12 +24,14 @@ export function Rating({ score, size = 'md' }: Props) {
     <View
       style={styles.row}
       accessible
-      accessibilityLabel={value ? `Rating ${value} out of 10` : 'Not rated yet'}>
-      <Icon ios="star.fill" android="star" size={iconSize} color={color} />
+      accessibilityLabel={value ? `Rating ${value} out of 10` : 'Not rated yet'}
+    >
+      <Icon name="star" size={iconSize} color={color} />
       <ThemedText
         type="smallBold"
         numberOfLines={1}
-        style={[styles.text, size === 'sm' && styles.textSm, { color }]}>
+        style={[styles.text, size === 'sm' && styles.textSm, { color }]}
+      >
         {value ?? 'N/A'}
       </ThemedText>
     </View>

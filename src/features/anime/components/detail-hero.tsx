@@ -1,11 +1,15 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Linking, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import { displayTitle, formatCountdown, trailerUrl } from '@/features/anime/format';
+import {
+  displayTitle,
+  formatCountdown,
+  trailerUrl,
+} from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
 
 const c = Colors.dark;
@@ -19,17 +23,19 @@ function Stat({ children }: { children: string }) {
 }
 
 export function DetailHero({ anime }: { anime: AnimeDetail }) {
-  const rated = anime.rankings.find((r) => r.type === 'RATED' && r.allTime);
-  const popular = anime.rankings.find((r) => r.type === 'POPULAR' && r.allTime);
+  const rated = anime.rankings.find(r => r.type === 'RATED' && r.allTime);
+  const popular = anime.rankings.find(r => r.type === 'POPULAR' && r.allTime);
   const trailer = trailerUrl(anime.trailer);
 
   return (
     <>
       <View style={styles.hero}>
-        <Image
-          source={anime.coverImage.extraLarge ?? anime.coverImage.large}
-          style={[styles.cover, { backgroundColor: anime.coverImage.color ?? c.backgroundElement }]}
-          contentFit="cover"
+        <RemoteImage
+          uri={anime.coverImage.extraLarge ?? anime.coverImage.large}
+          style={[
+            styles.cover,
+            { backgroundColor: anime.coverImage.color ?? c.backgroundElement },
+          ]}
         />
         <View style={styles.info}>
           <ThemedText type="subtitle" style={styles.title} numberOfLines={4}>
@@ -38,7 +44,7 @@ export function DetailHero({ anime }: { anime: AnimeDetail }) {
           {trailer ? (
             <Button
               label="Watch Trailer"
-              symbol={{ ios: 'play.fill', android: 'play_arrow' }}
+              symbol={'play'}
               variant="outline"
               onPress={() => Linking.openURL(trailer)}
               style={styles.trailer}
@@ -54,7 +60,9 @@ export function DetailHero({ anime }: { anime: AnimeDetail }) {
         {rated ? <Stat>{`#${rated.rank} Ranked`}</Stat> : null}
         {popular ? <Stat>{`Popularity #${popular.rank}`}</Stat> : null}
         {anime.nextAiringEpisode ? (
-          <Stat>{`Ep ${anime.nextAiringEpisode.episode} in ${formatCountdown(anime.nextAiringEpisode.timeUntilAiring)}`}</Stat>
+          <Stat>{`Ep ${anime.nextAiringEpisode.episode} in ${formatCountdown(
+            anime.nextAiringEpisode.timeUntilAiring,
+          )}`}</Stat>
         ) : null}
       </View>
     </>

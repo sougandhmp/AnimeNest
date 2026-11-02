@@ -1,6 +1,11 @@
 import type { ScheduleItem } from '@/features/schedule/api';
 
-export type ScheduleDay = { key: string; label: string; start: number; end: number };
+export type ScheduleDay = {
+  key: string;
+  label: string;
+  start: number;
+  end: number;
+};
 
 const DAY_SECONDS = 86400;
 
@@ -22,8 +27,8 @@ export function buildDays(count = 7, now = new Date()): ScheduleDay[] {
       i === 0
         ? 'Today'
         : i === 1
-          ? 'Tomorrow'
-          : day.toLocaleDateString([], { weekday: 'short', day: 'numeric' });
+        ? 'Tomorrow'
+        : day.toLocaleDateString([], { weekday: 'short', day: 'numeric' });
     return {
       key: day.toDateString(),
       label,
@@ -33,8 +38,11 @@ export function buildDays(count = 7, now = new Date()): ScheduleDay[] {
   });
 }
 
-export function itemsForDay(items: ScheduleItem[], day: ScheduleDay): ScheduleItem[] {
-  return items.filter((i) => i.airingAt >= day.start && i.airingAt < day.end);
+export function itemsForDay(
+  items: ScheduleItem[],
+  day: ScheduleDay,
+): ScheduleItem[] {
+  return items.filter(i => i.airingAt >= day.start && i.airingAt < day.end);
 }
 
 export { DAY_SECONDS };

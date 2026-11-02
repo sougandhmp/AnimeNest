@@ -1,30 +1,47 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import { displayTitle, formatAirTime, formatLabel } from '@/features/anime/format';
+import {
+  displayTitle,
+  formatAirTime,
+  formatLabel,
+} from '@/features/anime/format';
 import type { ScheduleItem } from '@/features/schedule/api';
 import { openAnime } from '@/lib/navigation';
 
 const c = Colors.dark;
 
-export function ScheduleRow({ item, now }: { item: ScheduleItem; now: number }) {
+export function ScheduleRow({
+  item,
+  now,
+}: {
+  item: ScheduleItem;
+  now: number;
+}) {
   const { media } = item;
   const aired = item.airingAt <= now;
-  const meta = [formatLabel(media.format), media.episodes ? `${media.episodes} eps` : null]
+  const meta = [
+    formatLabel(media.format),
+    media.episodes ? `${media.episodes} eps` : null,
+  ]
     .filter(Boolean)
     .join(' · ');
 
   return (
-    <Pressable onPress={() => openAnime(media.id)} style={[styles.row, aired && styles.aired]}>
+    <Pressable
+      onPress={() => openAnime(media.id)}
+      style={[styles.row, aired && styles.aired]}
+    >
       <View style={styles.time}>
         <ThemedText
           type="smallBold"
           numberOfLines={1}
           adjustsFontSizeToFit
-          style={{ color: aired ? c.textSecondary : c.accent }}>
+          style={{ color: aired ? c.textSecondary : c.accent }}
+        >
           {formatAirTime(item.airingAt)}
         </ThemedText>
         {aired ? (
@@ -33,10 +50,12 @@ export function ScheduleRow({ item, now }: { item: ScheduleItem; now: number }) 
           </ThemedText>
         ) : null}
       </View>
-      <Image
-        source={media.coverImage.large}
-        style={[styles.cover, { backgroundColor: media.coverImage.color ?? c.backgroundSelected }]}
-        contentFit="cover"
+      <RemoteImage
+        uri={media.coverImage.large}
+        style={[
+          styles.cover,
+          { backgroundColor: media.coverImage.color ?? c.backgroundSelected },
+        ]}
       />
       <View style={styles.body}>
         <ThemedText type="smallBold" numberOfLines={2}>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, type ViewStyle } from 'react-native';
 
-import { Icon } from '@/components/ui/icon';
+import { Icon, type IconName } from '@/components/ui/icon';
 
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
@@ -13,12 +13,19 @@ type Props = {
   onPress?: () => void;
   variant?: 'primary' | 'outline';
   /** Optional leading symbol, e.g. { ios: 'plus', android: 'add' }. */
-  symbol?: { ios: string; android: string };
+  symbol?: IconName;
   icon?: ReactNode;
   style?: ViewStyle;
 };
 
-export function Button({ label, onPress, variant = 'primary', symbol, icon, style }: Props) {
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  symbol,
+  icon,
+  style,
+}: Props) {
   const primary = variant === 'primary';
   return (
     <Pressable
@@ -30,9 +37,17 @@ export function Button({ label, onPress, variant = 'primary', symbol, icon, styl
         primary ? { backgroundColor: c.accent } : styles.outline,
         pressed && { opacity: 0.75 },
         style,
-      ]}>
-      {symbol ? <Icon ios={symbol.ios} android={symbol.android} size={16} color={primary ? c.accentText : c.text} /> : icon}
-      <ThemedText type="smallBold" style={{ color: primary ? c.accentText : c.text }}>
+      ]}
+    >
+      {symbol ? (
+        <Icon name={symbol} size={16} color={primary ? c.accentText : c.text} />
+      ) : (
+        icon
+      )}
+      <ThemedText
+        type="smallBold"
+        style={{ color: primary ? c.accentText : c.text }}
+      >
         {label}
       </ThemedText>
     </Pressable>

@@ -8,14 +8,22 @@ function Separator() {
   return <View style={{ width: Spacing.two }} />;
 }
 
-export function PosterRow({ items, ranked }: { items: AnimeSummary[]; ranked?: boolean }) {
+export function PosterRow({
+  items,
+  ranked,
+}: {
+  items: AnimeSummary[];
+  ranked?: boolean;
+}) {
   return (
     <FlatList
       horizontal
       showsHorizontalScrollIndicator={false}
       data={items}
-      keyExtractor={(i) => String(i.id)}
-      renderItem={({ item, index }) => <Poster anime={item} rank={ranked ? index + 1 : undefined} />}
+      keyExtractor={i => String(i.id)}
+      renderItem={({ item, index }) => (
+        <Poster anime={item} rank={ranked ? index + 1 : undefined} />
+      )}
       ItemSeparatorComponent={Separator}
     />
   );

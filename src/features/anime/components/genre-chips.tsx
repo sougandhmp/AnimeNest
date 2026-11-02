@@ -13,9 +13,15 @@ export function GenreChips({ selected, onSelect }: Props) {
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.scroll}
-      contentContainerStyle={styles.content}>
-      {GENRES.map((g) => (
-        <Chip key={g} label={g} selected={g === selected} onPress={() => onSelect(g)} />
+      contentContainerStyle={styles.content}
+    >
+      {GENRES.map(g => (
+        <Chip
+          key={g}
+          label={g}
+          selected={g === selected}
+          onPress={() => onSelect(g)}
+        />
       ))}
     </ScrollView>
   );

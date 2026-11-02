@@ -4,9 +4,13 @@ import { buildDays } from '@/features/schedule/days';
 
 export function useSchedule(dayCount = 7) {
   return useAsync(
-    async (signal) => {
+    async signal => {
       const days = buildDays(dayCount);
-      const items = await fetchSchedule(days[0].start, days[days.length - 1].end, signal);
+      const items = await fetchSchedule(
+        days[0].start,
+        days[days.length - 1].end,
+        signal,
+      );
       // Captured at fetch time (not render time) so "Aired" labels stay pure and stable.
       return { items, fetchedAt: Math.floor(Date.now() / 1000) };
     },

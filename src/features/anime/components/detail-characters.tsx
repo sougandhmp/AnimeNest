@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -12,20 +12,25 @@ const c = Colors.dark;
 
 export function DetailCharacters({ anime }: { anime: AnimeDetail }) {
   const recommendations = anime.recommendations.nodes
-    .map((n) => n.mediaRecommendation)
+    .map(n => n.mediaRecommendation)
     .filter((m): m is NonNullable<typeof m> => !!m);
 
   return (
     <View style={styles.section}>
       {anime.characters.edges.length === 0 ? (
-        <ThemedText themeColor="textSecondary">No character information available.</ThemedText>
+        <ThemedText themeColor="textSecondary">
+          No character information available.
+        </ThemedText>
       ) : (
         <View style={styles.list}>
-          {anime.characters.edges.map((edge) => {
+          {anime.characters.edges.map(edge => {
             const va = edge.voiceActors[0];
             return (
               <View key={edge.node.id} style={styles.row}>
-                <Image source={edge.node.image.large} style={styles.avatar} contentFit="cover" />
+                <RemoteImage
+                  uri={edge.node.image.large}
+                  style={styles.avatar}
+                />
                 <View style={styles.flex}>
                   <ThemedText type="smallBold" numberOfLines={1}>
                     {edge.node.name.full}
@@ -44,7 +49,7 @@ export function DetailCharacters({ anime }: { anime: AnimeDetail }) {
                         Japanese VA
                       </ThemedText>
                     </View>
-                    <Image source={va.image.large} style={styles.avatar} contentFit="cover" />
+                    <RemoteImage uri={va.image.large} style={styles.avatar} />
                   </>
                 ) : null}
               </View>
@@ -56,8 +61,12 @@ export function DetailCharacters({ anime }: { anime: AnimeDetail }) {
       {recommendations.length ? (
         <View>
           <SectionHeader title="Recommendations" />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recs}>
-            {recommendations.map((m) => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.recs}
+          >
+            {recommendations.map(m => (
               <Poster key={m.id} anime={m} width={100} />
             ))}
           </ScrollView>
@@ -80,6 +89,11 @@ const styles = StyleSheet.create({
   },
   flex: { flex: 1 },
   end: { alignItems: 'flex-end' },
-  avatar: { width: 52, height: 52, borderRadius: 26, backgroundColor: c.backgroundSelected },
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: c.backgroundSelected,
+  },
   recs: { gap: Spacing.two },
 });

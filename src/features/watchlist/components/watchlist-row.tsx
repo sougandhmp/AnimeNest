@@ -1,19 +1,32 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
-import { STATUS_LABEL, type WatchEntry, changeProgress } from '@/features/watchlist/store';
+import {
+  STATUS_LABEL,
+  type WatchEntry,
+  changeProgress,
+} from '@/features/watchlist/store';
 import { openAnime } from '@/lib/navigation';
 
-function Stepper({ symbol, label, onPress }: { symbol: string; label: string; onPress: () => void }) {
+function Stepper({
+  symbol,
+  label,
+  onPress,
+}: {
+  symbol: string;
+  label: string;
+  onPress: () => void;
+}) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={8}
-      style={styles.step}>
+      style={styles.step}
+    >
       <ThemedText type="smallBold">{symbol}</ThemedText>
     </Pressable>
   );
@@ -22,11 +35,15 @@ function Stepper({ symbol, label, onPress }: { symbol: string; label: string; on
 export function WatchlistRow({ entry }: { entry: WatchEntry }) {
   const total = entry.episodes;
   const pct = total ? Math.min(1, entry.progress / total) : 0;
-  const episodeText = total ? ` · Ep ${entry.progress} / ${total}` : entry.progress ? ` · Ep ${entry.progress}` : '';
+  const episodeText = total
+    ? ` · Ep ${entry.progress} / ${total}`
+    : entry.progress
+    ? ` · Ep ${entry.progress}`
+    : '';
 
   return (
     <Pressable onPress={() => openAnime(entry.id)} style={styles.row}>
-      <Image source={entry.cover} style={styles.cover} contentFit="cover" />
+      <RemoteImage uri={entry.cover} style={styles.cover} />
       <View style={styles.body}>
         <ThemedText type="smallBold" numberOfLines={2}>
           {entry.title}
@@ -44,9 +61,17 @@ export function WatchlistRow({ entry }: { entry: WatchEntry }) {
             <View style={styles.flex} />
           )}
           {entry.status !== 'PLANNING' ? (
-            <Stepper symbol="−" label="Previous episode" onPress={() => changeProgress(entry.id, -1)} />
+            <Stepper
+              symbol="−"
+              label="Previous episode"
+              onPress={() => changeProgress(entry.id, -1)}
+            />
           ) : null}
-          <Stepper symbol="+" label="Next episode" onPress={() => changeProgress(entry.id, 1)} />
+          <Stepper
+            symbol="+"
+            label="Next episode"
+            onPress={() => changeProgress(entry.id, 1)}
+          />
         </View>
       </View>
     </Pressable>
@@ -61,10 +86,20 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.three,
     backgroundColor: Colors.dark.backgroundElement,
   },
-  cover: { width: 64, height: 92, borderRadius: Spacing.two, backgroundColor: Colors.dark.backgroundSelected },
+  cover: {
+    width: 64,
+    height: 92,
+    borderRadius: Spacing.two,
+    backgroundColor: Colors.dark.backgroundSelected,
+  },
   body: { flex: 1, gap: Spacing.one, justifyContent: 'center' },
   flex: { flex: 1 },
-  progressRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two, marginTop: Spacing.one },
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    marginTop: Spacing.one,
+  },
   track: {
     flex: 1,
     height: 6,

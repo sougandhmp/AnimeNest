@@ -17,7 +17,7 @@ export function useAsync<T>(
     if (!enabled) return;
     const controller = new AbortController();
     loader(controller.signal)
-      .then((result) => {
+      .then(result => {
         if (controller.signal.aborted) return;
         setData(result);
         setError(undefined);
@@ -32,8 +32,14 @@ export function useAsync<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, enabled]);
 
-  const reload = useCallback(() => setReloadKey((k) => k + 1), []);
+  const reload = useCallback(() => setReloadKey(k => k + 1), []);
   const fetching = enabled && settledKey !== key;
 
-  return { data, error, fetching, loading: enabled && data === undefined && !error, reload };
+  return {
+    data,
+    error,
+    fetching,
+    loading: enabled && data === undefined && !error,
+    reload,
+  };
 }

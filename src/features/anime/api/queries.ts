@@ -44,12 +44,23 @@ export type HomeFeed = {
 const HOME_QUERY = /* GraphQL */ `
   query Home($season: MediaSeason, $year: Int) {
     trending: Page(perPage: 8) {
-      media(type: ANIME, season: $season, seasonYear: $year, sort: TRENDING_DESC, isAdult: false) {
+      media(
+        type: ANIME
+        season: $season
+        seasonYear: $year
+        sort: TRENDING_DESC
+        isAdult: false
+      ) {
         ...CardFields
       }
     }
     airing: Page(perPage: 15) {
-      media(type: ANIME, status: RELEASING, sort: POPULARITY_DESC, isAdult: false) {
+      media(
+        type: ANIME
+        status: RELEASING
+        sort: POPULARITY_DESC
+        isAdult: false
+      ) {
         ...CardFields
       }
     }
@@ -76,12 +87,28 @@ export async function fetchHomeFeed(signal?: AbortSignal): Promise<HomeFeed> {
   };
 }
 
-export type SearchFilter = { format?: 'TV' | 'MOVIE'; topRated?: boolean; genre?: string };
+export type SearchFilter = {
+  format?: 'TV' | 'MOVIE';
+  topRated?: boolean;
+  genre?: string;
+};
 
 const SEARCH_QUERY = /* GraphQL */ `
-  query Search($search: String, $format: MediaFormat, $genre: String, $sort: [MediaSort]) {
+  query Search(
+    $search: String
+    $format: MediaFormat
+    $genre: String
+    $sort: [MediaSort]
+  ) {
     Page(perPage: 25) {
-      media(type: ANIME, search: $search, format: $format, genre: $genre, sort: $sort, isAdult: false) {
+      media(
+        type: ANIME
+        search: $search
+        format: $format
+        genre: $genre
+        sort: $sort
+        isAdult: false
+      ) {
         ...CardFields
       }
     }
@@ -98,11 +125,16 @@ export async function searchAnime(
   const sort = filter.topRated
     ? ['SCORE_DESC']
     : term
-      ? ['SEARCH_MATCH', 'POPULARITY_DESC']
-      : ['POPULARITY_DESC'];
+    ? ['SEARCH_MATCH', 'POPULARITY_DESC']
+    : ['POPULARITY_DESC'];
   const data = await anilistQuery<{ Page: { media: AnimeSummary[] } }>(
     SEARCH_QUERY,
-    { search: term || undefined, format: filter.format, genre: filter.genre, sort },
+    {
+      search: term || undefined,
+      format: filter.format,
+      genre: filter.genre,
+      sort,
+    },
     signal,
   );
   return data.Page.media;
@@ -190,7 +222,14 @@ const DETAIL_QUERY = /* GraphQL */ `
   ${CARD_FIELDS}
 `;
 
-export async function fetchAnimeDetail(id: number, signal?: AbortSignal): Promise<AnimeDetail> {
-  const data = await anilistQuery<{ Media: AnimeDetail }>(DETAIL_QUERY, { id }, signal);
+export async function fetchAnimeDetail(
+  id: number,
+  signal?: AbortSignal,
+): Promise<AnimeDetail> {
+  const data = await anilistQuery<{ Media: AnimeDetail }>(
+    DETAIL_QUERY,
+    { id },
+    signal,
+  );
   return data.Media;
 }

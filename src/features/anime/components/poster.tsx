@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -21,16 +21,22 @@ type Props = {
 
 export function Poster({ anime, width = 120, rank }: Props) {
   return (
-    <Pressable onPress={() => openAnime(anime.id)} style={{ width }} accessibilityRole="button">
+    <Pressable
+      onPress={() => openAnime(anime.id)}
+      style={{ width }}
+      accessibilityRole="button"
+    >
       <View>
-        <Image
-          source={anime.coverImage.large}
+        <RemoteImage
+          uri={anime.coverImage.large}
           style={[
             styles.poster,
-            { width, height: width * 1.45, backgroundColor: anime.coverImage.color ?? c.backgroundElement },
+            {
+              width,
+              height: width * 1.45,
+              backgroundColor: anime.coverImage.color ?? c.backgroundElement,
+            },
           ]}
-          contentFit="cover"
-          transition={200}
         />
         {rank ? (
           <View style={styles.badge}>

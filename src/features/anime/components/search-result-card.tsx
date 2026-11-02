@@ -1,4 +1,4 @@
-import { Image } from 'expo-image';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Rating } from '@/components/ui/rating';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
-import { cleanDescription, displayTitle, formatLabel, seasonLabel } from '@/features/anime/format';
+import {
+  cleanDescription,
+  displayTitle,
+  formatLabel,
+  seasonLabel,
+} from '@/features/anime/format';
 import type { AnimeSummary } from '@/features/anime/types';
 import { useWatchEntry } from '@/features/watchlist/hooks/use-watchlist';
 import { addToWatchlist } from '@/features/watchlist/store';
@@ -24,11 +29,15 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
 
   return (
     <View style={styles.card}>
-      <Image
-        source={anime.coverImage.large}
-        style={[styles.cover, { backgroundColor: anime.coverImage.color ?? Colors.dark.backgroundSelected }]}
-        contentFit="cover"
-        transition={200}
+      <RemoteImage
+        uri={anime.coverImage.large}
+        style={[
+          styles.cover,
+          {
+            backgroundColor:
+              anime.coverImage.color ?? Colors.dark.backgroundSelected,
+          },
+        ]}
       />
       <View style={styles.body}>
         <ThemedText type="smallBold" numberOfLines={2}>
@@ -40,7 +49,7 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
           </ThemedText>
         ) : null}
         <View style={styles.tags}>
-          {anime.genres.slice(0, 3).map((g) => (
+          {anime.genres.slice(0, 3).map(g => (
             <Tag key={g}>{g}</Tag>
           ))}
         </View>
@@ -51,11 +60,16 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
         <View style={styles.actions}>
           <Button
             label={inList ? 'In List' : 'Add'}
-            symbol={inList ? { ios: 'checkmark', android: 'check' } : { ios: 'plus', android: 'add' }}
+            symbol={inList ? 'check' : 'add'}
             onPress={() => addToWatchlist(anime)}
             style={styles.action}
           />
-          <Button label="Detail" variant="outline" onPress={() => openAnime(anime.id)} style={styles.action} />
+          <Button
+            label="Detail"
+            variant="outline"
+            onPress={() => openAnime(anime.id)}
+            style={styles.action}
+          />
         </View>
       </View>
     </View>
