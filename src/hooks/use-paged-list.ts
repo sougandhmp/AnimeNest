@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { readCache, writeCache } from '@/lib/cache';
 
 type Page<T> = { items: T[]; hasNext: boolean };
 
@@ -11,6 +13,8 @@ type State<T> = { key: string; items: T[]; page: number; hasNext: boolean };
 export function usePagedList<T extends { id: number }>(
   key: string,
   fetchPage: (page: number, signal?: AbortSignal) => Promise<Page<T>>,
+  /** When set, page 1 is cached under this key and shown instantly (also offline). */
+  cacheKey?: string,
 ) {
   const [state, setState] = useState<State<T> | undefined>();
   const [error, setError] = useState<Error | undefined>();
@@ -29,6 +33,9 @@ export function usePagedList<T extends { id: number }>(
     fetchRef
       .current(1, controller.signal)
       .then(result => {
+        if (cacheKey) {
+          writeCache(cacheKey, result);
+        }
         setState({
           key,
           items: result.items,
@@ -43,9 +50,15 @@ export function usePagedList<T extends { id: number }>(
         }
       });
     return () => controller.abort();
-  }, [key, reloadKey]);
+  }, [key, reloadKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const current = state?.key === key ? state : undefined;
+  const cached = useMemo(() => {
+    const entry = cacheKey ? readCache<Page<T>>(cacheKey) : undefined;
+    return entry
+      ? { key, items: entry.value.items, page: 1, hasNext: entry.value.hasNext }
+      : undefined;
+  }, [cacheKey, key]);
+  const current = state?.key === key ? state : cached;
 
   const loadMore = useCallback(() => {
     if (!current || !current.hasNext || busy.current) {
