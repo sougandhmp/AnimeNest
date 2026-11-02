@@ -7,21 +7,22 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+const palette = {
+  text: '#ffffff',
+  background: '#12102B',
+  backgroundElement: '#1C1A3D',
+  backgroundSelected: '#2A2756',
+  textSecondary: '#A6A3C8',
+  accent: '#8B7BF2',
+  accentText: '#ffffff',
+  star: '#FFC83D',
+  danger: '#FF6B8B',
+} as const;
+
+// AnimeNest is a dark-only app: both schemes share the same palette.
 export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+  light: palette,
+  dark: palette,
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
