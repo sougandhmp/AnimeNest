@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
+import { MasterDetail } from '@/components/master-detail';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { Chip } from '@/components/ui/chip';
@@ -20,6 +21,7 @@ import { SORT_LABEL, sortEntries } from '@/features/watchlist/sort';
 import { WatchlistRow } from '@/features/watchlist/components/watchlist-row';
 import { useWatchlist } from '@/features/watchlist/hooks/use-watchlist';
 import { STATUS_LABEL, type WatchStatus } from '@/features/watchlist/store';
+import { useIsTwoPane } from '@/lib/layout';
 
 type Tab = 'ALL' | WatchStatus;
 const TABS: Tab[] = ['ALL', 'WATCHING', 'PLANNING', 'COMPLETED'];
@@ -51,6 +53,7 @@ function Separator() {
 }
 
 export default function LibraryScreen() {
+  const twoPane = useIsTwoPane();
   const entries = useWatchlist();
   const { librarySort } = useSettings();
   const getTitle = useTitle();
@@ -67,53 +70,59 @@ export default function LibraryScreen() {
   }, [entries, tab, librarySort, getTitle]);
 
   return (
-    <Screen>
+    <Screen fullWidth={twoPane}>
       <AppHeader />
-      <ThemedText type="title" style={styles.title}>
-        My Watchlist
-      </ThemedText>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.chips}
-        contentContainerStyle={styles.chipsContent}
-      >
-        {TABS.map(t => (
-          <Chip
-            key={t}
-            label={`${tabLabel(t)} (${countFor(t)})`}
-            selected={tab === t}
-            onPress={() => setTab(t)}
-          />
-        ))}
-      </ScrollView>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.sorts}
-        contentContainerStyle={styles.chipsContent}
-      >
-        {SORTS.map(sort => (
-          <Chip
-            key={sort}
-            label={SORT_LABEL[sort]}
-            selected={librarySort === sort}
-            onPress={() => setLibrarySort(sort)}
-          />
-        ))}
-      </ScrollView>
-      <FlatList
-        data={shown}
-        keyExtractor={e => String(e.id)}
-        renderItem={({ item }) => <WatchlistRow entry={item} />}
-        ItemSeparatorComponent={Separator}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          entries.length === 0 ? (
-            <EmptyWatchlist />
-          ) : (
-            <EmptyState title={`Nothing in ${tabLabel(tab)}`} />
-          )
+      <MasterDetail
+        master={
+          <>
+            <ThemedText type="title" style={styles.title}>
+              My Watchlist
+            </ThemedText>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.chips}
+              contentContainerStyle={styles.chipsContent}
+            >
+              {TABS.map(t => (
+                <Chip
+                  key={t}
+                  label={`${tabLabel(t)} (${countFor(t)})`}
+                  selected={tab === t}
+                  onPress={() => setTab(t)}
+                />
+              ))}
+            </ScrollView>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.sorts}
+              contentContainerStyle={styles.chipsContent}
+            >
+              {SORTS.map(sort => (
+                <Chip
+                  key={sort}
+                  label={SORT_LABEL[sort]}
+                  selected={librarySort === sort}
+                  onPress={() => setLibrarySort(sort)}
+                />
+              ))}
+            </ScrollView>
+            <FlatList
+              data={shown}
+              keyExtractor={e => String(e.id)}
+              renderItem={({ item }) => <WatchlistRow entry={item} />}
+              ItemSeparatorComponent={Separator}
+              contentContainerStyle={styles.list}
+              ListEmptyComponent={
+                entries.length === 0 ? (
+                  <EmptyWatchlist />
+                ) : (
+                  <EmptyState title={`Nothing in ${tabLabel(tab)}`} />
+                )
+              }
+            />
+          </>
         }
       />
     </Screen>

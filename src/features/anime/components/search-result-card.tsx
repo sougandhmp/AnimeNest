@@ -15,9 +15,10 @@ import {
 import type { AnimeSummary } from '@/features/anime/types';
 import { useWatchEntry } from '@/features/watchlist/hooks/use-watchlist';
 import { addToWatchlist } from '@/features/watchlist/store';
-import { openAnime } from '@/lib/navigation';
+import { useOpenAnime } from '@/lib/open-anime';
 
 export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
+  const openAnime = useOpenAnime();
   const getTitle = useTitle();
   const inList = !!useWatchEntry(anime.id);
   const meta = [

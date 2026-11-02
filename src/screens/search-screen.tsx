@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
+import { MasterDetail } from '@/components/master-detail';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { Chip } from '@/components/ui/chip';
@@ -36,6 +37,7 @@ import {
 } from '@/features/search/history';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { TabParamList } from '@/navigation/types';
+import { useIsTwoPane } from '@/lib/layout';
 
 const TYPES: { label: string; value: SearchFilter }[] = [
   { label: 'All Types', value: {} },
@@ -79,6 +81,7 @@ function RecentSearches({ onPick }: { onPick: (term: string) => void }) {
 }
 
 export default function SearchScreen() {
+  const twoPane = useIsTwoPane();
   const [text, setText] = useState('');
   const [typeIndex, setTypeIndex] = useState(0);
   const [advanced, setAdvanced] = useState<AdvancedFilter>({});
@@ -101,84 +104,94 @@ export default function SearchScreen() {
     navigation.setParams({ genre: g === genre ? undefined : g } as never);
 
   return (
-    <Screen>
+    <Screen fullWidth={twoPane}>
       <AppHeader />
-      <View style={styles.searchRow}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          onSubmitEditing={() => addRecentSearch(text)}
-          placeholder="Search anime"
-          placeholderTextColor={Colors.dark.textSecondary}
-          style={[styles.input, styles.inputFlex]}
-          returnKeyType="search"
-          autoCorrect={false}
-          clearButtonMode="while-editing"
-        />
-        <Pressable
-          onPress={() => setShowFilters(v => !v)}
-          accessibilityRole="button"
-          accessibilityLabel="Filters"
-          accessibilityState={{ expanded: showFilters }}
-          style={[
-            styles.filterButton,
-            (showFilters || activeCount > 0) && styles.filterButtonActive,
-          ]}
-        >
-          <Icon name="tune" size={20} />
-          {activeCount > 0 ? (
-            <View style={styles.badge}>
-              <ThemedText style={styles.badgeText}>{activeCount}</ThemedText>
+      <MasterDetail
+        master={
+          <>
+            <View style={styles.searchRow}>
+              <TextInput
+                value={text}
+                onChangeText={setText}
+                onSubmitEditing={() => addRecentSearch(text)}
+                placeholder="Search anime"
+                placeholderTextColor={Colors.dark.textSecondary}
+                style={[styles.input, styles.inputFlex]}
+                returnKeyType="search"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+              />
+              <Pressable
+                onPress={() => setShowFilters(v => !v)}
+                accessibilityRole="button"
+                accessibilityLabel="Filters"
+                accessibilityState={{ expanded: showFilters }}
+                style={[
+                  styles.filterButton,
+                  (showFilters || activeCount > 0) && styles.filterButtonActive,
+                ]}
+              >
+                <Icon name="tune" size={20} />
+                {activeCount > 0 ? (
+                  <View style={styles.badge}>
+                    <ThemedText style={styles.badgeText}>
+                      {activeCount}
+                    </ThemedText>
+                  </View>
+                ) : null}
+              </Pressable>
             </View>
-          ) : null}
-        </Pressable>
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.chips}
-        contentContainerStyle={styles.chipsContent}
-      >
-        {TYPES.map((f, i) => (
-          <Chip
-            key={f.label}
-            label={f.label}
-            selected={i === typeIndex}
-            onPress={() => setTypeIndex(i)}
-          />
-        ))}
-      </ScrollView>
-      <View style={styles.genres}>
-        <GenreChips selected={genre} onSelect={toggleGenre} />
-      </View>
-      {showFilters ? (
-        <SearchFilters value={advanced} onChange={setAdvanced} />
-      ) : null}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.chips}
+              contentContainerStyle={styles.chipsContent}
+            >
+              {TYPES.map((f, i) => (
+                <Chip
+                  key={f.label}
+                  label={f.label}
+                  selected={i === typeIndex}
+                  onPress={() => setTypeIndex(i)}
+                />
+              ))}
+            </ScrollView>
+            <View style={styles.genres}>
+              <GenreChips selected={genre} onSelect={toggleGenre} />
+            </View>
+            {showFilters ? (
+              <SearchFilters value={advanced} onChange={setAdvanced} />
+            ) : null}
 
-      {loading || (fetching && !!data) ? (
-        <Loading />
-      ) : !data ? (
-        <ErrorState message={error?.message} onRetry={reload} />
-      ) : (
-        <FlatList
-          data={data}
-          keyExtractor={i => String(i.id)}
-          renderItem={({ item }) => <SearchResultCard anime={item} />}
-          ItemSeparatorComponent={Separator}
-          contentContainerStyle={styles.list}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="handled"
-          ListHeaderComponent={
-            text.length === 0 ? <RecentSearches onPick={setText} /> : undefined
-          }
-          ListEmptyComponent={
-            <EmptyState
-              title="No results"
-              hint="Try a different title or clear the filters."
-            />
-          }
-        />
-      )}
+            {loading || (fetching && !!data) ? (
+              <Loading />
+            ) : !data ? (
+              <ErrorState message={error?.message} onRetry={reload} />
+            ) : (
+              <FlatList
+                data={data}
+                keyExtractor={i => String(i.id)}
+                renderItem={({ item }) => <SearchResultCard anime={item} />}
+                ItemSeparatorComponent={Separator}
+                contentContainerStyle={styles.list}
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="handled"
+                ListHeaderComponent={
+                  text.length === 0 ? (
+                    <RecentSearches onPick={setText} />
+                  ) : undefined
+                }
+                ListEmptyComponent={
+                  <EmptyState
+                    title="No results"
+                    hint="Try a different title or clear the filters."
+                  />
+                }
+              />
+            )}
+          </>
+        }
+      />
     </Screen>
   );
 }

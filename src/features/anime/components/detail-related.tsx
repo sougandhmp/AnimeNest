@@ -6,11 +6,12 @@ import { ThemedText } from '@/components/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
 import { formatLabel, titleCase } from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
-import { openAnime } from '@/lib/navigation';
+import { useOpenAnime } from '@/lib/open-anime';
 
 const c = Colors.dark;
 
 export function DetailRelated({ anime }: { anime: AnimeDetail }) {
+  const openAnime = useOpenAnime();
   const getTitle = useTitle();
   const items = anime.relations.edges.filter(e => e.node.type === 'ANIME');
   if (items.length === 0) {

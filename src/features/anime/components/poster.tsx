@@ -7,7 +7,7 @@ import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
 import {} from '@/features/anime/format';
 import type { AnimeSummary } from '@/features/anime/types';
-import { openAnime } from '@/lib/navigation';
+import { useOpenAnime } from '@/lib/open-anime';
 
 const c = Colors.dark;
 
@@ -24,6 +24,7 @@ type Props = {
 };
 
 export function Poster({ anime, width = 120, rank, hideRating }: Props) {
+  const openAnime = useOpenAnime();
   const getTitle = useTitle();
   return (
     <Pressable

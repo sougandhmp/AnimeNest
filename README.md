@@ -27,6 +27,7 @@ Built with React Native (CLI) and React Navigation.
 - **Search extras:** recent searches, advanced filters (sort, status, season, year) and a "Surprise me" button on Home
 - **Offline cache:** Home, schedule, detail pages and "See all" lists are saved on the device, shown instantly and still available without a connection, with an "Updated ... ago" note
 - **Settings:** title language (English, Romaji or Native), clear cached data, clear search history, delete watchlist
+- **Tablet layout:** on tablets, Schedule, Search and Library show the list on the left and the selected anime's details on the right (phones keep single-pane screens)
 - Dark theme, pull to refresh, loading / error / empty states
 
 ## Tech stack
@@ -80,6 +81,7 @@ src/
   components/
     ui/                   Shared building blocks (button, chip, rating, icon...)
     screen.tsx            Safe-area page wrapper
+    master-detail.tsx     Tablet list + detail layout
     app-header.tsx        Brand header
   features/
     anime/                AniList API client and queries, types, formatters,

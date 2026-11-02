@@ -7,7 +7,7 @@ import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
 import { formatAirTime, formatLabel } from '@/features/anime/format';
 import type { ScheduleItem } from '@/features/schedule/api';
-import { openAnime } from '@/lib/navigation';
+import { useOpenAnime } from '@/lib/open-anime';
 
 const c = Colors.dark;
 
@@ -18,6 +18,7 @@ export function ScheduleRow({
   item: ScheduleItem;
   now: number;
 }) {
+  const openAnime = useOpenAnime();
   const getTitle = useTitle();
   const { media } = item;
   const aired = item.airingAt <= now;

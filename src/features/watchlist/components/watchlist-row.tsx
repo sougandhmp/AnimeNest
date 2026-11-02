@@ -9,7 +9,7 @@ import {
   type WatchEntry,
   changeProgress,
 } from '@/features/watchlist/store';
-import { openAnime } from '@/lib/navigation';
+import { useOpenAnime } from '@/lib/open-anime';
 
 function Stepper({
   symbol,
@@ -34,6 +34,7 @@ function Stepper({
 }
 
 export function WatchlistRow({ entry }: { entry: WatchEntry }) {
+  const openAnime = useOpenAnime();
   const getTitle = useTitle();
   const total = entry.episodes;
   const pct = total ? Math.min(1, entry.progress / total) : 0;
