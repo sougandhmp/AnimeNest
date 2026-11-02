@@ -14,7 +14,7 @@ Built with React Native (CLI) and React Navigation.
 
 ## Features
 
-- **Home feed:** trending this season carousel, top airing now and all-time popular rows
+- **Home feed:** trending this season carousel, genre chips, and rows for top airing, popular this season, all-time popular, top rated, top movies, coming soon and recently finished, each with a "See all" screen that pages in more titles as you scroll
 - **Airing schedule:** the next 7 days of episodes, grouped by day with air times, plus a "next episode" countdown on each anime
 - **Genre browsing:** genre chips on Home and Search, and tappable genre tags on the detail screen
 - **Search:** debounced search with All Types, TV, Movie and Top Rated filters, combinable with a genre
