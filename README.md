@@ -6,11 +6,13 @@ Built with React Native (CLI) and React Navigation.
 
 ## Screenshots
 
-| Home | Schedule | Search by genre | Details |
-| :---: | :---: | :---: | :---: |
-| <img src="docs/screenshots/home.png" width="190" alt="Home feed" /> | <img src="docs/screenshots/schedule.png" width="190" alt="Airing schedule" /> | <img src="docs/screenshots/search.png" width="190" alt="Search with genre filter" /> | <img src="docs/screenshots/detail.png" width="190" alt="Anime details" /> |
-| **Characters & cast** | **Watchlist** | **Profile** | |
-| <img src="docs/screenshots/characters.png" width="190" alt="Characters and voice actors" /> | <img src="docs/screenshots/library.png" width="190" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="190" alt="Profile stats" /> | |
+| Home | Schedule | Search by genre |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/home.png" width="220" alt="Home feed" /> | <img src="docs/screenshots/schedule.png" width="220" alt="Airing schedule" /> | <img src="docs/screenshots/search.png" width="220" alt="Search with genre filter" /> |
+| **Advanced filters** | **Details** | **Characters & cast** |
+| <img src="docs/screenshots/filters.png" width="220" alt="Search filters" /> | <img src="docs/screenshots/detail.png" width="220" alt="Anime details with score and notes" /> | <img src="docs/screenshots/characters.png" width="220" alt="Characters and voice actors" /> |
+| **Watchlist** | **Profile and stats** | **Settings** |
+| <img src="docs/screenshots/library.png" width="220" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="220" alt="Profile stats" /> | <img src="docs/screenshots/settings.png" width="220" alt="Settings" /> |
 
 ## Features
 
