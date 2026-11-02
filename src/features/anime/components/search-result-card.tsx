@@ -1,3 +1,4 @@
+import { useTitle } from '@/features/settings/use-title';
 import { RemoteImage } from '@/components/ui/remote-image';
 import { StyleSheet, View } from 'react-native';
 
@@ -8,7 +9,6 @@ import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
 import {
   cleanDescription,
-  displayTitle,
   formatLabel,
   seasonLabel,
 } from '@/features/anime/format';
@@ -18,6 +18,7 @@ import { addToWatchlist } from '@/features/watchlist/store';
 import { openAnime } from '@/lib/navigation';
 
 export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
+  const getTitle = useTitle();
   const inList = !!useWatchEntry(anime.id);
   const meta = [
     formatLabel(anime.format),
@@ -41,7 +42,7 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
       />
       <View style={styles.body}>
         <ThemedText type="smallBold" numberOfLines={2}>
-          {displayTitle(anime.title)}
+          {getTitle(anime.title)}
         </ThemedText>
         {meta ? (
           <ThemedText type="small" themeColor="textSecondary">

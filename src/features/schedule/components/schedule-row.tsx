@@ -1,14 +1,11 @@
+import { useTitle } from '@/features/settings/use-title';
 import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import {
-  displayTitle,
-  formatAirTime,
-  formatLabel,
-} from '@/features/anime/format';
+import { formatAirTime, formatLabel } from '@/features/anime/format';
 import type { ScheduleItem } from '@/features/schedule/api';
 import { openAnime } from '@/lib/navigation';
 
@@ -21,6 +18,7 @@ export function ScheduleRow({
   item: ScheduleItem;
   now: number;
 }) {
+  const getTitle = useTitle();
   const { media } = item;
   const aired = item.airingAt <= now;
   const meta = [
@@ -59,7 +57,7 @@ export function ScheduleRow({
       />
       <View style={styles.body}>
         <ThemedText type="smallBold" numberOfLines={2}>
-          {displayTitle(media.title)}
+          {getTitle(media.title)}
         </ThemedText>
         <ThemedText type="small" style={{ color: c.accent }}>
           Episode {item.episode}

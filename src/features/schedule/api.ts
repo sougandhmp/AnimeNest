@@ -35,6 +35,7 @@ const SCHEDULE_QUERY = /* GraphQL */ `
           title {
             romaji
             english
+            native
           }
           coverImage {
             large

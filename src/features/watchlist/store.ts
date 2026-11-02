@@ -1,7 +1,7 @@
-import { getItem, setItem } from '@/features/watchlist/storage';
+import { getItem, setItem } from '@/lib/storage';
 
 import { displayTitle } from '@/features/anime/format';
-import type { AnimeSummary } from '@/features/anime/types';
+import type { AnimeSummary, Title } from '@/features/anime/types';
 
 export type WatchStatus = 'WATCHING' | 'PLANNING' | 'COMPLETED';
 
@@ -21,6 +21,14 @@ export type WatchEntry = {
   status: WatchStatus;
   progress: number;
   addedAt: number;
+  /** Raw titles, so the list follows the title-language setting. Older entries only have `title`. */
+  titles?: Title;
+  genres?: string[];
+  /** Minutes per episode. */
+  duration?: number | null;
+  /** Your own score, 1-10. */
+  score?: number;
+  note?: string;
 };
 
 const KEY = 'animenest.watchlist.v1';
@@ -82,6 +90,9 @@ export function setStatus(anime: AnimeSummary, status: WatchStatus) {
       {
         id: anime.id,
         title: displayTitle(anime.title),
+        titles: anime.title,
+        genres: anime.genres,
+        duration: anime.duration,
         cover: anime.coverImage.large,
         format: anime.format,
         episodes: anime.episodes,
@@ -121,4 +132,30 @@ export function changeProgress(id: number, delta: number) {
       return { ...e, progress, status };
     }),
   );
+}
+
+export function clearWatchlist() {
+  write([]);
+}
+
+export function setScore(id: number, score: number | undefined) {
+  write(getWatchlist().map(e => (e.id === id ? { ...e, score } : e)));
+}
+
+export function setNote(id: number, note: string) {
+  const trimmed = note.trim();
+  write(
+    getWatchlist().map(e =>
+      e.id === id ? { ...e, note: trimmed ? trimmed : undefined } : e,
+    ),
+  );
+}
+
+/** Fill in details (genres, duration) for entries saved before those were stored. */
+export function patchEntries(
+  patches: Record<number, Pick<WatchEntry, 'genres' | 'duration' | 'titles'>>,
+) {
+  const entries = getWatchlist();
+  if (!entries.some(e => patches[e.id])) return;
+  write(entries.map(e => (patches[e.id] ? { ...e, ...patches[e.id] } : e)));
 }

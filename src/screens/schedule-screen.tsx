@@ -9,6 +9,7 @@ import { EmptyState, ErrorState, Loading } from '@/components/ui/states';
 import { Spacing } from '@/constants/theme';
 import { ScheduleRow } from '@/features/schedule/components/schedule-row';
 import { buildDays, itemsForDay } from '@/features/schedule/days';
+import { formatAgo } from '@/lib/cache';
 import { useSchedule } from '@/features/schedule/hooks/use-schedule';
 
 function Separator() {
@@ -18,7 +19,7 @@ function Separator() {
 export default function ScheduleScreen() {
   const days = useMemo(() => buildDays(), []);
   const [dayIndex, setDayIndex] = useState(0);
-  const { data, error, loading, reload } = useSchedule();
+  const { data, error, loading, fetching, reload, updatedAt } = useSchedule();
   const items = data ? itemsForDay(data.items, days[dayIndex]) : [];
 
   return (
@@ -42,6 +43,16 @@ export default function ScheduleScreen() {
           />
         ))}
       </ScrollView>
+      {updatedAt ? (
+        <ThemedText
+          type="small"
+          themeColor="textSecondary"
+          style={styles.updated}
+        >
+          {error ? 'Offline · showing saved schedule from ' : 'Updated '}
+          {formatAgo(updatedAt)}
+        </ThemedText>
+      ) : null}
 
       {loading ? (
         <Loading />
@@ -56,7 +67,7 @@ export default function ScheduleScreen() {
           )}
           ItemSeparatorComponent={Separator}
           contentContainerStyle={styles.list}
-          refreshing={false}
+          refreshing={fetching && !!data}
           onRefresh={reload}
           ListEmptyComponent={
             <EmptyState
@@ -71,6 +82,7 @@ export default function ScheduleScreen() {
 }
 
 const styles = StyleSheet.create({
+  updated: { marginBottom: Spacing.two },
   title: { fontSize: 28, lineHeight: 34, marginTop: Spacing.two },
   chips: { flexGrow: 0, flexShrink: 0, marginVertical: Spacing.three },
   chipsContent: { gap: Spacing.two },

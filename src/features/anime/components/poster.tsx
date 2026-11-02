@@ -1,10 +1,11 @@
+import { useTitle } from '@/features/settings/use-title';
 import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import { displayTitle } from '@/features/anime/format';
+import {} from '@/features/anime/format';
 import type { AnimeSummary } from '@/features/anime/types';
 import { openAnime } from '@/lib/navigation';
 
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export function Poster({ anime, width = 120, rank, hideRating }: Props) {
+  const getTitle = useTitle();
   return (
     <Pressable
       onPress={() => openAnime(anime.id)}
@@ -51,7 +53,7 @@ export function Poster({ anime, width = 120, rank, hideRating }: Props) {
         )}
       </View>
       <ThemedText type="small" numberOfLines={2} style={styles.title}>
-        {displayTitle(anime.title)}
+        {getTitle(anime.title)}
       </ThemedText>
     </Pressable>
   );

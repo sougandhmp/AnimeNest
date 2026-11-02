@@ -1,8 +1,9 @@
-import { RemoteImage } from '@/components/ui/remote-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { RemoteImage } from '@/components/ui/remote-image';
 import { Colors, Spacing } from '@/constants/theme';
+import { useTitle } from '@/features/settings/use-title';
 import {
   STATUS_LABEL,
   type WatchEntry,
@@ -33,6 +34,7 @@ function Stepper({
 }
 
 export function WatchlistRow({ entry }: { entry: WatchEntry }) {
+  const getTitle = useTitle();
   const total = entry.episodes;
   const pct = total ? Math.min(1, entry.progress / total) : 0;
   const episodeText = total
@@ -45,13 +47,36 @@ export function WatchlistRow({ entry }: { entry: WatchEntry }) {
     <Pressable onPress={() => openAnime(entry.id)} style={styles.row}>
       <RemoteImage uri={entry.cover} style={styles.cover} />
       <View style={styles.body}>
-        <ThemedText type="smallBold" numberOfLines={2}>
-          {entry.title}
-        </ThemedText>
+        <View style={styles.titleRow}>
+          <ThemedText type="smallBold" numberOfLines={2} style={styles.title}>
+            {entry.titles ? getTitle(entry.titles) : entry.title}
+          </ThemedText>
+          {entry.score ? (
+            <View
+              accessible
+              accessibilityLabel={`Your score ${entry.score} out of 10`}
+              style={styles.myScore}
+            >
+              <ThemedText style={styles.myScoreText}>
+                You {entry.score}/10
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
         <ThemedText type="small" themeColor="textSecondary">
           {STATUS_LABEL[entry.status]}
           {episodeText}
         </ThemedText>
+        {entry.note ? (
+          <ThemedText
+            type="small"
+            themeColor="textSecondary"
+            numberOfLines={1}
+            style={styles.note}
+          >
+            “{entry.note}”
+          </ThemedText>
+        ) : null}
         <View style={styles.progressRow}>
           {entry.status !== 'PLANNING' ? (
             <View style={styles.track}>
@@ -93,6 +118,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.backgroundSelected,
   },
   body: { flex: 1, gap: Spacing.one, justifyContent: 'center' },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.two,
+  },
+  title: { flex: 1 },
+  myScore: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Spacing.one,
+    backgroundColor: Colors.dark.backgroundSelected,
+  },
+  myScoreText: { fontSize: 11, color: Colors.dark.star, fontWeight: '700' },
+  note: { fontStyle: 'italic' },
   flex: { flex: 1 },
   progressRow: {
     flexDirection: 'row',

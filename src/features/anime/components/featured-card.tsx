@@ -1,16 +1,17 @@
+import { useTitle } from '@/features/settings/use-title';
 import { RemoteImage } from '@/components/ui/remote-image';
-import { Linking, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { Rating } from '@/components/ui/rating';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
-import { displayTitle, trailerUrl } from '@/features/anime/format';
+import { trailerUrl } from '@/features/anime/format';
 import type { AnimeSummary } from '@/features/anime/types';
 import { useWatchEntry } from '@/features/watchlist/hooks/use-watchlist';
 import { addToWatchlist } from '@/features/watchlist/store';
-import { openAnime } from '@/lib/navigation';
+import { openAnime, openTrailer } from '@/lib/navigation';
 
 export function FeaturedCard({
   anime,
@@ -19,6 +20,7 @@ export function FeaturedCard({
   anime: AnimeSummary;
   width: number;
 }) {
+  const getTitle = useTitle();
   const inList = !!useWatchEntry(anime.id);
   const trailer = trailerUrl(anime.trailer);
 
@@ -39,7 +41,7 @@ export function FeaturedCard({
           style={styles.title}
           onPress={() => openAnime(anime.id)}
         >
-          {displayTitle(anime.title)}
+          {getTitle(anime.title)}
         </ThemedText>
         <View style={styles.row}>
           {anime.genres.slice(0, 3).map(g => (
@@ -60,7 +62,9 @@ export function FeaturedCard({
             symbol={'play'}
             variant="outline"
             onPress={() =>
-              trailer ? Linking.openURL(trailer) : openAnime(anime.id)
+              trailer
+                ? openTrailer(anime.trailer, getTitle(anime.title))
+                : openAnime(anime.id)
             }
             style={styles.flex}
           />

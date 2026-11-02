@@ -15,5 +15,6 @@ export function useSchedule(dayCount = 7) {
       return { items, fetchedAt: Math.floor(Date.now() / 1000) };
     },
     [dayCount],
+    { cacheKey: 'schedule' },
   );
 }
