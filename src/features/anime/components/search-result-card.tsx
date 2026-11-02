@@ -15,10 +15,11 @@ import {
 import type { AnimeSummary } from '@/features/anime/types';
 import { useWatchEntry } from '@/features/watchlist/hooks/use-watchlist';
 import { addToWatchlist } from '@/features/watchlist/store';
-import { useOpenAnime } from '@/lib/open-anime';
+import { useIsSelectedAnime, useOpenAnime } from '@/lib/open-anime';
 
 export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
   const openAnime = useOpenAnime();
+  const selected = useIsSelectedAnime(anime.id);
   const getTitle = useTitle();
   const inList = !!useWatchEntry(anime.id);
   const meta = [
@@ -30,7 +31,7 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
     .join(' · ');
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, selected && styles.selected]}>
       <RemoteImage
         uri={anime.coverImage.large}
         style={[
@@ -79,7 +80,11 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
 }
 
 const styles = StyleSheet.create({
+  // Open in the tablet detail pane. The border is always reserved (transparent) so rows don't shift.
+  selected: { borderColor: Colors.dark.accent },
   card: {
+    borderWidth: 2,
+    borderColor: 'transparent',
     flexDirection: 'row',
     gap: Spacing.three,
     padding: Spacing.two,

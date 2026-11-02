@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui/states';
 import { Colors, Spacing } from '@/constants/theme';
 import { AnimeDetailView } from '@/features/anime/components/anime-detail-view';
 import { useIsTwoPane } from '@/lib/layout';
-import { OpenAnimeContext } from '@/lib/open-anime';
+import { OpenAnimeContext, SelectedAnimeContext } from '@/lib/open-anime';
 
 /** Width of the list pane on tablets. */
 export const MASTER_WIDTH = 380;
@@ -26,20 +26,22 @@ export function MasterDetail({ master }: Props) {
 
   return (
     <OpenAnimeContext.Provider value={setSelected}>
-      <View style={styles.row}>
-        <View style={styles.master}>{master}</View>
-        <View style={styles.detail}>
-          {selected === undefined ? (
-            <EmptyState
-              title="Select an anime"
-              hint="Pick a title from the list to see its details here."
-            />
-          ) : (
-            // key resets tabs and scroll position when the selection changes.
-            <AnimeDetailView key={selected} id={selected} embedded />
-          )}
+      <SelectedAnimeContext.Provider value={selected}>
+        <View style={styles.row}>
+          <View style={styles.master}>{master}</View>
+          <View style={styles.detail}>
+            {selected === undefined ? (
+              <EmptyState
+                title="Select an anime"
+                hint="Pick a title from the list to see its details here."
+              />
+            ) : (
+              // key resets tabs and scroll position when the selection changes.
+              <AnimeDetailView key={selected} id={selected} embedded />
+            )}
+          </View>
         </View>
-      </View>
+      </SelectedAnimeContext.Provider>
     </OpenAnimeContext.Provider>
   );
 }

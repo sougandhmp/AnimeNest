@@ -13,3 +13,12 @@ export const OpenAnimeContext = createContext<OpenAnime>(openAnime);
 export function useOpenAnime(): OpenAnime {
   return useContext(OpenAnimeContext);
 }
+
+/** The anime currently shown in a tablet detail pane, if any (always undefined on phones). */
+export const SelectedAnimeContext = createContext<number | undefined>(
+  undefined,
+);
+
+export function useIsSelectedAnime(id: number): boolean {
+  return useContext(SelectedAnimeContext) === id;
+}

@@ -9,7 +9,7 @@ import {
   type WatchEntry,
   changeProgress,
 } from '@/features/watchlist/store';
-import { useOpenAnime } from '@/lib/open-anime';
+import { useIsSelectedAnime, useOpenAnime } from '@/lib/open-anime';
 
 function Stepper({
   symbol,
@@ -35,6 +35,7 @@ function Stepper({
 
 export function WatchlistRow({ entry }: { entry: WatchEntry }) {
   const openAnime = useOpenAnime();
+  const selected = useIsSelectedAnime(entry.id);
   const getTitle = useTitle();
   const total = entry.episodes;
   const pct = total ? Math.min(1, entry.progress / total) : 0;
@@ -45,7 +46,10 @@ export function WatchlistRow({ entry }: { entry: WatchEntry }) {
     : '';
 
   return (
-    <Pressable onPress={() => openAnime(entry.id)} style={styles.row}>
+    <Pressable
+      onPress={() => openAnime(entry.id)}
+      style={[styles.row, selected && styles.selected]}
+    >
       <RemoteImage uri={entry.cover} style={styles.cover} />
       <View style={styles.body}>
         <View style={styles.titleRow}>
@@ -105,7 +109,11 @@ export function WatchlistRow({ entry }: { entry: WatchEntry }) {
 }
 
 const styles = StyleSheet.create({
+  // Open in the tablet detail pane. The border is always reserved (transparent) so rows don't shift.
+  selected: { borderColor: Colors.dark.accent },
   row: {
+    borderWidth: 2,
+    borderColor: 'transparent',
     flexDirection: 'row',
     gap: Spacing.three,
     padding: Spacing.two,

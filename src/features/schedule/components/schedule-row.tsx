@@ -7,7 +7,7 @@ import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
 import { formatAirTime, formatLabel } from '@/features/anime/format';
 import type { ScheduleItem } from '@/features/schedule/api';
-import { useOpenAnime } from '@/lib/open-anime';
+import { useIsSelectedAnime, useOpenAnime } from '@/lib/open-anime';
 
 const c = Colors.dark;
 
@@ -21,6 +21,7 @@ export function ScheduleRow({
   const openAnime = useOpenAnime();
   const getTitle = useTitle();
   const { media } = item;
+  const selected = useIsSelectedAnime(media.id);
   const aired = item.airingAt <= now;
   const meta = [
     formatLabel(media.format),
@@ -32,7 +33,7 @@ export function ScheduleRow({
   return (
     <Pressable
       onPress={() => openAnime(media.id)}
-      style={[styles.row, aired && styles.aired]}
+      style={[styles.row, aired && styles.aired, selected && styles.selected]}
     >
       <View style={styles.time}>
         <ThemedText
@@ -75,7 +76,11 @@ export function ScheduleRow({
 }
 
 const styles = StyleSheet.create({
+  // Open in the tablet detail pane. The border is always reserved (transparent) so rows don't shift.
+  selected: { borderColor: Colors.dark.accent },
   row: {
+    borderWidth: 2,
+    borderColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
