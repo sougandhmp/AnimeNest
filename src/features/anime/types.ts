@@ -39,7 +39,10 @@ export type Recommendation = {
   mediaRecommendation: { id: number; title: Title; coverImage: { large: string | null } } | null;
 };
 
+export type NextAiring = { episode: number; airingAt: number; timeUntilAiring: number };
+
 export type AnimeDetail = AnimeSummary & {
+  nextAiringEpisode: NextAiring | null;
   title: Title & { native: string | null };
   source: string | null;
   popularity: number | null;

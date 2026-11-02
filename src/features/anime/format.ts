@@ -47,3 +47,52 @@ export function seasonLabel(season: string | null, year: number | null): string 
   if (!season || !year) return null;
   return `${titleCase(season)} ${year}`;
 }
+
+export function formatCountdown(seconds: number): string {
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${Math.max(m, 1)}m`;
+}
+
+export function formatAirTime(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+export function formatAirDate(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+/** Genres offered in the app (AniList's adult-only genre is intentionally left out). */
+export const GENRES = [
+  'Action',
+  'Adventure',
+  'Comedy',
+  'Drama',
+  'Ecchi',
+  'Fantasy',
+  'Horror',
+  'Mahou Shoujo',
+  'Mecha',
+  'Music',
+  'Mystery',
+  'Psychological',
+  'Romance',
+  'Sci-Fi',
+  'Slice of Life',
+  'Sports',
+  'Supernatural',
+  'Thriller',
+] as const;
+
+/** AniList scores are 0-100; show them as 0-10 with one decimal ("8.7"). Null/0 means unrated. */
+export function formatScore(score: number | null | undefined): string | null {
+  if (!score) return null;
+  return (score / 10).toFixed(1);
+}

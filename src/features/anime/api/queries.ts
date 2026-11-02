@@ -76,12 +76,12 @@ export async function fetchHomeFeed(signal?: AbortSignal): Promise<HomeFeed> {
   };
 }
 
-export type SearchFilter = { format?: 'TV' | 'MOVIE'; topRated?: boolean };
+export type SearchFilter = { format?: 'TV' | 'MOVIE'; topRated?: boolean; genre?: string };
 
 const SEARCH_QUERY = /* GraphQL */ `
-  query Search($search: String, $format: MediaFormat, $sort: [MediaSort]) {
+  query Search($search: String, $format: MediaFormat, $genre: String, $sort: [MediaSort]) {
     Page(perPage: 25) {
-      media(type: ANIME, search: $search, format: $format, sort: $sort, isAdult: false) {
+      media(type: ANIME, search: $search, format: $format, genre: $genre, sort: $sort, isAdult: false) {
         ...CardFields
       }
     }
@@ -102,7 +102,7 @@ export async function searchAnime(
       : ['POPULARITY_DESC'];
   const data = await anilistQuery<{ Page: { media: AnimeSummary[] } }>(
     SEARCH_QUERY,
-    { search: term || undefined, format: filter.format, sort },
+    { search: term || undefined, format: filter.format, genre: filter.genre, sort },
     signal,
   );
   return data.Page.media;
@@ -119,6 +119,11 @@ const DETAIL_QUERY = /* GraphQL */ `
       }
       source
       popularity
+      nextAiringEpisode {
+        episode
+        airingAt
+        timeUntilAiring
+      }
       rankings {
         rank
         type
