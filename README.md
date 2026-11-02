@@ -2,7 +2,7 @@
 
 AnimeNest is a cross-platform mobile app (iOS, Android, web) for discovering anime. It uses the [AniList](https://anilist.co) GraphQL API to browse anime lists and view anime details, and lets you build your own watchlist.
 
-Built with [Expo](https://expo.dev) (SDK 58), React Native and [Expo Router](https://docs.expo.dev/router/introduction).
+Built with React Native (CLI) and React Navigation.
 
 ## Screenshots
 
@@ -19,99 +19,76 @@ Built with [Expo](https://expo.dev) (SDK 58), React Native and [Expo Router](htt
 - **Genre browsing:** genre chips on Home and Search, and tappable genre tags on the detail screen
 - **Search:** debounced search with All Types, TV, Movie and Top Rated filters, combinable with a genre
 - **Details:** banner, score, rank, synopsis, genres and info, with Overview, Characters (Japanese voice actors, recommendations) and Related tabs
-- **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, and track episode progress. Stored on the device (SQLite on native, `localStorage` on web)
+- **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, and track episode progress. Stored on the device (MMKV)
 - **Profile:** simple stats from your watchlist
 - Dark theme, pull to refresh, loading / error / empty states
 
 ## Tech stack
 
-- Expo SDK 58, React Native 0.88, React 19, TypeScript
-- Expo Router (file-based routing, native tabs)
+- React Native 0.88 (CLI, bare workflow), React 19, TypeScript
+- React Navigation (native stack and bottom tabs)
 - AniList GraphQL API (`https://graphql.anilist.co`), no API key needed
-- `expo-sqlite` key-value store for the watchlist, `expo-image` for images
+- `react-native-mmkv` for the on-device watchlist, `react-native-svg` for icons
+
+> The original Expo version of this app is kept on the [`expo`](../../tree/expo) branch.
 
 ## Get started
 
-1. Install dependencies
+Requirements: Node 22.11+, Xcode and CocoaPods for iOS, Android Studio (SDK + JDK 17+) for Android. See the React Native [environment setup](https://reactnative.dev/docs/set-up-your-environment).
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+cd ios && pod install && cd ..   # iOS only
 
-2. Start the dev server
-
-   ```bash
-   npx expo start
-   ```
-
-`expo-sqlite` is a native module, so use a development build rather than Expo Go (see below).
-
-## Run on a device or simulator
-
-The native `ios/` and `android/` folders are generated (Continuous Native Generation) and gitignored. Don't edit them by hand; configure native behavior in `app.json` and config plugins.
+npm start                        # start Metro
+npm run ios                      # in another terminal: run on the iOS simulator
+npm run android                  # or run on an Android emulator / device
+```
 
 | Command | What it does |
 | --- | --- |
-| `npm run ios` | Build and run on the iOS simulator |
-| `npm run android` | Build and run on an Android emulator or device |
-| `npm run web` | Start the web version |
-| `npm run lint` | Lint the project |
-| `npx tsc --noEmit` | Typecheck |
-
-To regenerate the native projects after changing `app.json`, icons or plugins:
-
-```bash
-npx expo prebuild --clean
-```
+| `npm run lint` | ESLint (with Prettier rules) |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Jest unit tests |
+| `npm run pods` | `pod install` for iOS |
 
 ### Build an Android APK locally
 
 With the Android SDK installed (`ANDROID_HOME` set):
 
 ```bash
-npx expo prebuild --platform android
 cd android && ./gradlew assembleRelease
 # android/app/build/outputs/apk/release/app-release.apk
 ```
 
-The template signs release builds with the debug keystore, which is fine for sideloading but not for Google Play.
+Release builds are signed with the debug keystore by default, which is fine for sideloading but not for Google Play. Add your own keystore in `android/app/build.gradle` before publishing.
 
 ## Project structure
 
 ```
+App.tsx                   Root: safe area, navigation container, theme
+index.js                  App registration
 src/
-  app/                    Routes only (file-based routing)
-    _layout.tsx           Root stack and theme
-    (tabs)/               Home, Schedule, Search, Library, Profile
-    anime/[id].tsx        Anime detail screen
+  screens/                Home, Schedule, Search, Library, Profile, Anime detail
+  navigation/             Root stack, bottom tabs, route types, navigation ref
   components/
-    ui/                   Shared building blocks (button, chip, tag, states, icon...)
+    ui/                   Shared building blocks (button, chip, rating, icon...)
     screen.tsx            Safe-area page wrapper
     app-header.tsx        Brand header
-    app-tabs.tsx          Native tab bar (app-tabs.web.tsx for web)
   features/
     anime/                AniList API client and queries, types, formatters,
                           data hooks and anime components
     schedule/             Airing schedule query, day grouping, hook and row
-    watchlist/            Storage, store, hooks and watchlist components
+    watchlist/            MMKV storage, store, hooks and watchlist components
   hooks/                  Generic hooks (use-async, use-debounced-value, use-theme)
-  lib/                    Small helpers (navigation)
+  lib/navigation.ts       openAnime / openGenre helpers
   constants/theme.ts      Colors and spacing
+ios/, android/            Native projects (committed)
 docs/screenshots/         README screenshots
-assets/images/            App icon, adaptive icon, splash and favicon
+assets/images/            App icon source
 ```
 
-Keep non-route code outside `src/app/`.
-
-## Building and releasing
-
-Builds and updates are handled with [EAS](https://docs.expo.dev/eas/):
-
-```bash
-npx eas-cli@latest build
-npx eas-cli@latest submit
-npx eas-cli@latest update
-```
+Import with the `@/` alias (`@/` is `src/`).
 
 ## Credits
 
@@ -119,6 +96,6 @@ Anime data is provided by [AniList](https://anilist.co).
 
 ## Learn more
 
-- [Expo documentation](https://docs.expo.dev/)
-- [Expo Router](https://docs.expo.dev/router/introduction)
+- [React Native docs](https://reactnative.dev/docs/getting-started)
+- [React Navigation](https://reactnavigation.org/)
 - [AniList API docs](https://docs.anilist.co/)
