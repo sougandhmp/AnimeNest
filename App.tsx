@@ -3,6 +3,7 @@ import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/theme';
+import { purgeStaleCache } from '@/lib/cache';
 import { navigationRef } from '@/navigation/navigation-ref';
 import { RootNavigator } from '@/navigation/root-navigator';
 
@@ -17,6 +18,9 @@ const theme = {
     border: Colors.dark.backgroundElement,
   },
 };
+
+// Runs once at startup, before any screen reads the cache.
+purgeStaleCache();
 
 export default function App() {
   return (

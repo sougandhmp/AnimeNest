@@ -1,4 +1,11 @@
-import { clearCache, formatAgo, readCache, writeCache } from '@/lib/cache';
+import {
+  clearCache,
+  formatAgo,
+  purgeStaleCache,
+  readCache,
+  writeCache,
+} from '@/lib/cache';
+import { setItem } from '@/lib/storage';
 
 describe('cache', () => {
   beforeEach(() => {
@@ -32,6 +39,17 @@ describe('cache', () => {
     expect(readCache('detail:89')?.value).toBe(89);
     // The oldest were pruned to stay within the cap.
     expect(readCache('detail:0')).toBeUndefined();
+  });
+});
+
+describe('purgeStaleCache', () => {
+  it('drops entries from older cache versions but keeps current ones', () => {
+    clearCache();
+    setItem('cache:detail:1', '{"savedAt":1,"value":{}}');
+    setItem('cache:v1:detail:2', '{"savedAt":1,"value":{}}');
+    writeCache('detail:3', 3);
+    expect(purgeStaleCache()).toBe(2);
+    expect(readCache('detail:3')?.value).toBe(3);
   });
 });
 

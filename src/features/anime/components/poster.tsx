@@ -14,6 +14,7 @@ const c = Colors.dark;
 type Props = {
   anime: Pick<AnimeSummary, 'id' | 'title'> & {
     coverImage: { large: string | null; color?: string | null };
+    /** null = unrated (shows N/A); undefined = not loaded, so no badge. */
     averageScore?: number | null;
   };
   width?: number;
@@ -46,7 +47,7 @@ export function Poster({ anime, width = 120, rank, hideRating }: Props) {
           <View style={styles.badge}>
             <ThemedText type="smallBold">#{rank}</ThemedText>
           </View>
-        ) : hideRating ? null : (
+        ) : hideRating || anime.averageScore === undefined ? null : (
           <View style={styles.badge}>
             <Rating score={anime.averageScore} size="sm" />
           </View>

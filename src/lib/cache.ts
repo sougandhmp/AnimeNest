@@ -1,6 +1,9 @@
 import { getItem, keysWithPrefix, removeItem, setItem } from '@/lib/storage';
 
-const PREFIX = 'cache:';
+/** Bump when a cached response gains or changes fields, so old-shaped entries are dropped. */
+const CACHE_VERSION = 2;
+const ROOT = 'cache:';
+const PREFIX = `${ROOT}v${CACHE_VERSION}:`;
 /** Detail pages are the only unbounded cache group, so cap them. */
 const DETAIL_PREFIX = `${PREFIX}detail:`;
 const MAX_DETAIL_ENTRIES = 80;
@@ -51,8 +54,15 @@ function pruneDetailCache() {
     .forEach(d => removeItem(d.k));
 }
 
+/** Removes entries written by older cache versions. Safe to call on every launch. */
+export function purgeStaleCache(): number {
+  const stale = keysWithPrefix(ROOT).filter(k => !k.startsWith(PREFIX));
+  stale.forEach(removeItem);
+  return stale.length;
+}
+
 export function clearCache(): number {
-  const keys = keysWithPrefix(PREFIX);
+  const keys = keysWithPrefix(ROOT);
   keys.forEach(removeItem);
   return keys.length;
 }
