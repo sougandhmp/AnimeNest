@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -56,6 +56,31 @@ function ScorePicker({ entry }: { entry: WatchEntry }) {
 
 function NoteField({ entry }: { entry: WatchEntry }) {
   const [text, setText] = useState(entry.note ?? '');
+  const latest = useRef({ id: entry.id, text, saved: entry.note ?? '' });
+  latest.current = { id: entry.id, text, saved: entry.note ?? '' };
+
+  // Save shortly after typing stops, so a note is never lost if you navigate away.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const { id, text: current, saved } = latest.current;
+      if (current.trim() !== saved) {
+        setNote(id, current);
+      }
+    }, 500);
+    return () => clearTimeout(t);
+  }, [text]);
+
+  // ...and flush any pending edit when the screen closes.
+  useEffect(
+    () => () => {
+      const { id, text: current, saved } = latest.current;
+      if (current.trim() !== saved) {
+        setNote(id, current);
+      }
+    },
+    [],
+  );
+
   return (
     <View style={styles.block}>
       <ThemedText type="smallBold" themeColor="textSecondary">
@@ -64,7 +89,6 @@ function NoteField({ entry }: { entry: WatchEntry }) {
       <TextInput
         value={text}
         onChangeText={setText}
-        onEndEditing={() => setNote(entry.id, text)}
         placeholder="Add a private note…"
         placeholderTextColor={Colors.dark.textSecondary}
         multiline
