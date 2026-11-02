@@ -14,6 +14,16 @@ Built with React Native (CLI) and React Navigation.
 | **Watchlist** | **Profile and stats** | **Settings** |
 | <img src="docs/screenshots/library.png" width="220" alt="My watchlist" /> | <img src="docs/screenshots/profile.png" width="220" alt="Profile stats" /> | <img src="docs/screenshots/settings.png" width="220" alt="Settings" /> |
 
+### Tablets
+
+On tablets, Schedule, Search and Library switch to a two-pane layout: the list on the left and the selected anime's full details on the right. The open item is highlighted in the list. Phones keep the single-pane screens.
+
+| iPad: Search | iPad: Watchlist |
+| :---: | :---: |
+| <img src="docs/screenshots/tablet-ipad-search.png" width="330" alt="iPad two-pane search" /> | <img src="docs/screenshots/tablet-ipad-library.png" width="330" alt="iPad two-pane watchlist" /> |
+
+<img src="docs/screenshots/tablet-android-search.png" width="680" alt="Android tablet two-pane search" />
+
 ## Features
 
 - **Home feed:** trending this season carousel, genre chips, and rows for top airing, popular this season, all-time popular, top rated, top movies, coming soon and recently finished, each with a "See all" screen that pages in more titles as you scroll
