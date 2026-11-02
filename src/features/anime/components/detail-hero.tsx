@@ -3,8 +3,9 @@ import { Linking, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
+import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import { displayTitle, trailerUrl } from '@/features/anime/format';
+import { displayTitle, formatCountdown, trailerUrl } from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
 
 const c = Colors.dark;
@@ -47,9 +48,14 @@ export function DetailHero({ anime }: { anime: AnimeDetail }) {
       </View>
 
       <View style={styles.stats}>
-        {anime.averageScore ? <Stat>{`★ ${(anime.averageScore / 10).toFixed(2)}`}</Stat> : null}
+        <View style={styles.stat}>
+          <Rating score={anime.averageScore} />
+        </View>
         {rated ? <Stat>{`#${rated.rank} Ranked`}</Stat> : null}
         {popular ? <Stat>{`Popularity #${popular.rank}`}</Stat> : null}
+        {anime.nextAiringEpisode ? (
+          <Stat>{`Ep ${anime.nextAiringEpisode.episode} in ${formatCountdown(anime.nextAiringEpisode.timeUntilAiring)}`}</Stat>
+        ) : null}
       </View>
     </>
   );

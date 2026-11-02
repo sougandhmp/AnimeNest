@@ -60,7 +60,7 @@ export default function LibraryScreen() {
 
 const styles = StyleSheet.create({
   title: { fontSize: 28, lineHeight: 34, marginTop: Spacing.two },
-  chips: { flexGrow: 0, marginVertical: Spacing.three },
+  chips: { flexGrow: 0, flexShrink: 0, marginVertical: Spacing.three },
   chipsContent: { gap: Spacing.two },
   separator: { height: Spacing.two },
   list: { paddingBottom: BottomTabInset + Spacing.four, flexGrow: 1 },

@@ -6,8 +6,17 @@ import { SectionHeader } from '@/components/ui/section-header';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
 import { InfoRow } from '@/features/anime/components/info-row';
-import { cleanDescription, formatLabel, seasonLabel, titleCase } from '@/features/anime/format';
+import {
+  cleanDescription,
+  formatAirDate,
+  formatAirTime,
+  formatLabel,
+  formatScore,
+  seasonLabel,
+  titleCase,
+} from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
+import { openGenre } from '@/lib/navigation';
 
 export function DetailOverview({ anime }: { anime: AnimeDetail }) {
   const [expanded, setExpanded] = useState(false);
@@ -30,7 +39,9 @@ export function DetailOverview({ anime }: { anime: AnimeDetail }) {
       {anime.genres.length ? (
         <View style={styles.tags}>
           {anime.genres.map((g) => (
-            <Tag key={g}>{g}</Tag>
+            <Tag key={g} onPress={() => openGenre(g)}>
+              {g}
+            </Tag>
           ))}
         </View>
       ) : null}
@@ -42,10 +53,16 @@ export function DetailOverview({ anime }: { anime: AnimeDetail }) {
         <InfoRow label="Format" value={formatLabel(anime.format) ?? '—'} />
         <InfoRow label="Episodes" value={anime.episodes?.toString() ?? '—'} />
         <InfoRow label="Status" value={titleCase(anime.status)} />
+        {anime.nextAiringEpisode ? (
+          <InfoRow
+            label="Next ep."
+            value={`Ep ${anime.nextAiringEpisode.episode} · ${formatAirDate(anime.nextAiringEpisode.airingAt)}, ${formatAirTime(anime.nextAiringEpisode.airingAt)}`}
+          />
+        ) : null}
         <InfoRow label="Source" value={titleCase(anime.source)} />
         <InfoRow
           label="Rating"
-          value={anime.averageScore ? `${(anime.averageScore / 10).toFixed(2)} / 10` : '—'}
+          value={formatScore(anime.averageScore) ? `${formatScore(anime.averageScore)} / 10` : 'N/A'}
         />
       </View>
     </View>

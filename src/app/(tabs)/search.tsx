@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useMemo, useState } from 'react';
 import { FlatList, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
@@ -6,6 +7,7 @@ import { Screen } from '@/components/screen';
 import { Chip } from '@/components/ui/chip';
 import { EmptyState, ErrorState, Loading } from '@/components/ui/states';
 import { BottomTabInset, Colors, Spacing } from '@/constants/theme';
+import { GenreChips } from '@/features/anime/components/genre-chips';
 import { SearchResultCard } from '@/features/anime/components/search-result-card';
 import { useAnimeSearch } from '@/features/anime/hooks/use-anime-search';
 import type { SearchFilter } from '@/features/anime/api/queries';
@@ -25,8 +27,12 @@ function Separator() {
 export default function SearchScreen() {
   const [text, setText] = useState('');
   const [filterIndex, setFilterIndex] = useState(0);
+  const { genre } = useLocalSearchParams<{ genre?: string }>();
   const term = useDebouncedValue(text);
-  const { data, error, loading, fetching, reload } = useAnimeSearch(term, FILTERS[filterIndex].value);
+  const filter = useMemo(() => ({ ...FILTERS[filterIndex].value, genre }), [filterIndex, genre]);
+  const { data, error, loading, fetching, reload } = useAnimeSearch(term, filter);
+
+  const toggleGenre = (g: string) => router.setParams({ genre: g === genre ? undefined : g });
 
   return (
     <Screen>
@@ -50,6 +56,9 @@ export default function SearchScreen() {
           <Chip key={f.label} label={f.label} selected={i === filterIndex} onPress={() => setFilterIndex(i)} />
         ))}
       </ScrollView>
+      <View style={styles.genres}>
+        <GenreChips selected={genre} onSelect={toggleGenre} />
+      </View>
 
       {loading || (fetching && !!data) ? (
         <Loading />
@@ -80,8 +89,9 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     fontSize: 16,
   },
-  chips: { flexGrow: 0, marginVertical: Spacing.three },
+  chips: { flexGrow: 0, flexShrink: 0, marginTop: Spacing.three, marginBottom: Spacing.two },
   chipsContent: { gap: Spacing.two },
   separator: { height: Spacing.two },
+  genres: { marginBottom: Spacing.three },
   list: { paddingBottom: BottomTabInset + Spacing.four, flexGrow: 1 },
 });

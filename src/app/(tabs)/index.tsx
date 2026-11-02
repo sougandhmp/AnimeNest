@@ -14,9 +14,11 @@ import { ThemedText } from '@/components/themed-text';
 import { ErrorState, Loading } from '@/components/ui/states';
 import { SectionHeader } from '@/components/ui/section-header';
 import { BottomTabInset, Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { GenreChips } from '@/features/anime/components/genre-chips';
 import { FeaturedCard } from '@/features/anime/components/featured-card';
 import { PosterRow } from '@/features/anime/components/poster-row';
 import { useHomeFeed } from '@/features/anime/hooks/use-home-feed';
+import { openGenre } from '@/lib/navigation';
 
 export default function HomeScreen() {
   const { data, error, loading, fetching, reload } = useHomeFeed();
@@ -63,6 +65,11 @@ export default function HomeScreen() {
                 <View key={a.id} style={[styles.dot, i === page && styles.dotActive]} />
               ))}
             </View>
+          </View>
+
+          <View>
+            <SectionHeader title="Browse by genre" />
+            <GenreChips onSelect={openGenre} />
           </View>
 
           <View>

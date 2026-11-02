@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
 import { displayTitle } from '@/features/anime/format';
 import type { AnimeSummary } from '@/features/anime/types';
@@ -37,15 +38,7 @@ export function Poster({ anime, width = 120, rank }: Props) {
           </View>
         ) : (
           <View style={styles.badge}>
-            {anime.averageScore ? (
-              <ThemedText type="smallBold" style={{ color: c.star }}>
-                ★ {(anime.averageScore / 10).toFixed(1)}
-              </ThemedText>
-            ) : (
-              <ThemedText type="smallBold" themeColor="textSecondary">
-                ★ N/A
-              </ThemedText>
-            )}
+            <Rating score={anime.averageScore} size="sm" />
           </View>
         )}
       </View>

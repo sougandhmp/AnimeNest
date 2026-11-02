@@ -3,7 +3,7 @@ import { Linking, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
-import { Score } from '@/components/ui/score';
+import { Rating } from '@/components/ui/rating';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
 import { displayTitle, trailerUrl } from '@/features/anime/format';
@@ -33,7 +33,7 @@ export function FeaturedCard({ anime, width }: { anime: AnimeSummary; width: num
             <Tag key={g}>{g}</Tag>
           ))}
           <View style={styles.spacer} />
-          <Score value={anime.averageScore} />
+          <Rating score={anime.averageScore} />
         </View>
         <View style={styles.row}>
           <Button

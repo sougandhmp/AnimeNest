@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
-import { Score } from '@/components/ui/score';
+import { Rating } from '@/components/ui/rating';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
 import { cleanDescription, displayTitle, formatLabel, seasonLabel } from '@/features/anime/format';
@@ -47,7 +47,7 @@ export function SearchResultCard({ anime }: { anime: AnimeSummary }) {
         <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
           {cleanDescription(anime.description)}
         </ThemedText>
-        <Score value={anime.averageScore} />
+        <Rating score={anime.averageScore} />
         <View style={styles.actions}>
           <Button
             label={inList ? 'In List' : 'Add'}
