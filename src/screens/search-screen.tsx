@@ -1,12 +1,23 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import {
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from '@react-navigation/native';
 import { useMemo, useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import type { TabParamList } from '@/navigation/types';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { AppHeader } from '@/components/app-header';
 import { Screen } from '@/components/screen';
 import { Chip } from '@/components/ui/chip';
 import { EmptyState, ErrorState, Loading } from '@/components/ui/states';
-import { BottomTabInset, Colors, Spacing } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { GenreChips } from '@/features/anime/components/genre-chips';
 import { SearchResultCard } from '@/features/anime/components/search-result-card';
 import { useAnimeSearch } from '@/features/anime/hooks/use-anime-search';
@@ -27,12 +38,21 @@ function Separator() {
 export default function SearchScreen() {
   const [text, setText] = useState('');
   const [filterIndex, setFilterIndex] = useState(0);
-  const { genre } = useLocalSearchParams<{ genre?: string }>();
+  const route = useRoute<RouteProp<TabParamList, 'Search'>>();
+  const navigation = useNavigation();
+  const genre = route.params?.genre;
   const term = useDebouncedValue(text);
-  const filter = useMemo(() => ({ ...FILTERS[filterIndex].value, genre }), [filterIndex, genre]);
-  const { data, error, loading, fetching, reload } = useAnimeSearch(term, filter);
+  const filter = useMemo(
+    () => ({ ...FILTERS[filterIndex].value, genre }),
+    [filterIndex, genre],
+  );
+  const { data, error, loading, fetching, reload } = useAnimeSearch(
+    term,
+    filter,
+  );
 
-  const toggleGenre = (g: string) => router.setParams({ genre: g === genre ? undefined : g });
+  const toggleGenre = (g: string) =>
+    navigation.setParams({ genre: g === genre ? undefined : g } as never);
 
   return (
     <Screen>
@@ -51,9 +71,15 @@ export default function SearchScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.chips}
-        contentContainerStyle={styles.chipsContent}>
+        contentContainerStyle={styles.chipsContent}
+      >
         {FILTERS.map((f, i) => (
-          <Chip key={f.label} label={f.label} selected={i === filterIndex} onPress={() => setFilterIndex(i)} />
+          <Chip
+            key={f.label}
+            label={f.label}
+            selected={i === filterIndex}
+            onPress={() => setFilterIndex(i)}
+          />
         ))}
       </ScrollView>
       <View style={styles.genres}>
@@ -67,13 +93,18 @@ export default function SearchScreen() {
       ) : (
         <FlatList
           data={data}
-          keyExtractor={(i) => String(i.id)}
+          keyExtractor={i => String(i.id)}
           renderItem={({ item }) => <SearchResultCard anime={item} />}
           ItemSeparatorComponent={Separator}
           contentContainerStyle={styles.list}
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
-          ListEmptyComponent={<EmptyState title="No results" hint="Try a different title or clear the filter." />}
+          ListEmptyComponent={
+            <EmptyState
+              title="No results"
+              hint="Try a different title or clear the filter."
+            />
+          }
         />
       )}
     </Screen>
@@ -89,9 +120,14 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     fontSize: 16,
   },
-  chips: { flexGrow: 0, flexShrink: 0, marginTop: Spacing.three, marginBottom: Spacing.two },
+  chips: {
+    flexGrow: 0,
+    flexShrink: 0,
+    marginTop: Spacing.three,
+    marginBottom: Spacing.two,
+  },
   chipsContent: { gap: Spacing.two },
   separator: { height: Spacing.two },
   genres: { marginBottom: Spacing.three },
-  list: { paddingBottom: BottomTabInset + Spacing.four, flexGrow: 1 },
+  list: { paddingBottom: Spacing.four, flexGrow: 1 },
 });

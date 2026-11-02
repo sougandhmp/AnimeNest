@@ -1,5 +1,9 @@
-import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
+import { RemoteImage } from '@/components/ui/remote-image';
+import {
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from '@react-navigation/native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +16,7 @@ import { DetailCharacters } from '@/features/anime/components/detail-characters'
 import { DetailHero } from '@/features/anime/components/detail-hero';
 import { DetailOverview } from '@/features/anime/components/detail-overview';
 import { DetailRelated } from '@/features/anime/components/detail-related';
+import type { RootStackParamList } from '@/navigation/types';
 import { useAnimeDetail } from '@/features/anime/hooks/use-anime-detail';
 import { WatchlistMenu } from '@/features/watchlist/components/watchlist-menu';
 
@@ -20,20 +25,26 @@ const TABS = ['Overview', 'Characters', 'Related'] as const;
 type Tab = (typeof TABS)[number];
 
 function BackButton() {
+  const navigation = useNavigation();
   return (
     <Pressable
-      onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      onPress={() =>
+        navigation.canGoBack()
+          ? navigation.goBack()
+          : navigation.navigate('Tabs')
+      }
       accessibilityRole="button"
       accessibilityLabel="Back"
-      style={styles.back}>
-      <Icon ios="chevron.left" android="chevron_left" />
+      style={styles.back}
+    >
+      <Icon name="chevron-left" />
     </Pressable>
   );
 }
 
 export default function AnimeDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const { data: anime, error, loading, reload } = useAnimeDetail(Number(id));
+  const { params } = useRoute<RouteProp<RootStackParamList, 'AnimeDetail'>>();
+  const { data: anime, error, loading, reload } = useAnimeDetail(params.id);
   const [tab, setTab] = useState<Tab>('Overview');
 
   if (!anime) {
@@ -41,7 +52,14 @@ export default function AnimeDetailScreen() {
       <View style={styles.container}>
         <SafeAreaView style={styles.safeArea}>
           <BackButton />
-          {loading ? <Loading /> : <ErrorState message={error?.message ?? 'Anime not found.'} onRetry={reload} />}
+          {loading ? (
+            <Loading />
+          ) : (
+            <ErrorState
+              message={error?.message ?? 'Anime not found.'}
+              onRetry={reload}
+            />
+          )}
         </SafeAreaView>
       </View>
     );
@@ -51,10 +69,9 @@ export default function AnimeDetailScreen() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.banner}>
-          <Image
-            source={anime.bannerImage ?? anime.coverImage.extraLarge}
+          <RemoteImage
+            uri={anime.bannerImage ?? anime.coverImage.extraLarge}
             style={StyleSheet.absoluteFill}
-            contentFit="cover"
           />
           <View style={[StyleSheet.absoluteFill, styles.scrim]} />
           <SafeAreaView edges={['top']}>
@@ -66,8 +83,13 @@ export default function AnimeDetailScreen() {
           <DetailHero anime={anime} />
           <WatchlistMenu anime={anime} />
           <View style={styles.tabs}>
-            {TABS.map((t) => (
-              <Chip key={t} label={t} selected={tab === t} onPress={() => setTab(t)} />
+            {TABS.map(t => (
+              <Chip
+                key={t}
+                label={t}
+                selected={tab === t}
+                onPress={() => setTab(t)}
+              />
             ))}
           </View>
           {tab === 'Overview' ? (

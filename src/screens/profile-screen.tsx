@@ -35,12 +35,17 @@ export default function ProfileScreen() {
       <View style={styles.grid}>
         <Stat label="In watchlist" value={entries.length} />
         <Stat label="Episodes watched" value={episodes} />
-        {STATUSES.map((s) => (
-          <Stat key={s} label={STATUS_LABEL[s]} value={entries.filter((e) => e.status === s).length} />
+        {STATUSES.map(s => (
+          <Stat
+            key={s}
+            label={STATUS_LABEL[s]}
+            value={entries.filter(e => e.status === s).length}
+          />
         ))}
       </View>
       <ThemedText type="small" themeColor="textSecondary" style={styles.note}>
-        Your watchlist is stored on this device. Anime data is provided by AniList.
+        Your watchlist is stored on this device. Anime data is provided by
+        AniList.
       </ThemedText>
     </Screen>
   );

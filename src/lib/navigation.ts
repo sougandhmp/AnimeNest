@@ -1,9 +1,13 @@
-import { type Href, router } from 'expo-router';
+import { navigationRef } from '@/navigation/navigation-ref';
 
 export function openAnime(id: number) {
-  router.push(`/anime/${id}` as Href);
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('AnimeDetail', { id });
+  }
 }
 
 export function openGenre(genre: string) {
-  router.navigate({ pathname: '/search', params: { genre } } as Href);
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('Tabs', { screen: 'Search', params: { genre } });
+  }
 }

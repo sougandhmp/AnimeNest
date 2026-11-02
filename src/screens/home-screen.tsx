@@ -13,7 +13,7 @@ import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { ErrorState, Loading } from '@/components/ui/states';
 import { SectionHeader } from '@/components/ui/section-header';
-import { BottomTabInset, Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { GenreChips } from '@/features/anime/components/genre-chips';
 import { FeaturedCard } from '@/features/anime/components/featured-card';
 import { PosterRow } from '@/features/anime/components/poster-row';
@@ -37,8 +37,13 @@ export default function HomeScreen() {
         <ScrollView
           contentContainerStyle={styles.content}
           refreshControl={
-            <RefreshControl refreshing={fetching} onRefresh={reload} tintColor={Colors.dark.accent} />
-          }>
+            <RefreshControl
+              refreshing={fetching}
+              onRefresh={reload}
+              tintColor={Colors.dark.accent}
+            />
+          }
+        >
           {error ? (
             <ThemedText type="small" themeColor="textSecondary">
               Couldn&apos;t refresh. Showing previous results.
@@ -54,15 +59,22 @@ export default function HomeScreen() {
               decelerationRate="fast"
               showsHorizontalScrollIndicator={false}
               data={data.trending}
-              keyExtractor={(i) => String(i.id)}
-              renderItem={({ item }) => <FeaturedCard anime={item} width={cardWidth} />}
-              onScroll={(e) => setPage(Math.round(e.nativeEvent.contentOffset.x / cardWidth))}
+              keyExtractor={i => String(i.id)}
+              renderItem={({ item }) => (
+                <FeaturedCard anime={item} width={cardWidth} />
+              )}
+              onScroll={e =>
+                setPage(Math.round(e.nativeEvent.contentOffset.x / cardWidth))
+              }
               scrollEventThrottle={32}
               style={styles.carousel}
             />
             <View style={styles.dots}>
               {data.trending.map((a, i) => (
-                <View key={a.id} style={[styles.dot, i === page && styles.dotActive]} />
+                <View
+                  key={a.id}
+                  style={[styles.dot, i === page && styles.dotActive]}
+                />
               ))}
             </View>
           </View>
@@ -88,9 +100,19 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { gap: Spacing.four, paddingBottom: BottomTabInset + Spacing.five },
+  content: { gap: Spacing.four, paddingBottom: Spacing.five },
   carousel: { marginRight: -Spacing.two },
-  dots: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: Spacing.two },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.dark.backgroundSelected },
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: Spacing.two,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.dark.backgroundSelected,
+  },
   dotActive: { backgroundColor: Colors.dark.accent },
 });

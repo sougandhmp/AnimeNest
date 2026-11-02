@@ -6,7 +6,7 @@ import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { Chip } from '@/components/ui/chip';
 import { EmptyState, ErrorState, Loading } from '@/components/ui/states';
-import { BottomTabInset, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { ScheduleRow } from '@/features/schedule/components/schedule-row';
 import { buildDays, itemsForDay } from '@/features/schedule/days';
 import { useSchedule } from '@/features/schedule/hooks/use-schedule';
@@ -31,9 +31,15 @@ export default function ScheduleScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.chips}
-        contentContainerStyle={styles.chipsContent}>
+        contentContainerStyle={styles.chipsContent}
+      >
         {days.map((d, i) => (
-          <Chip key={d.key} label={d.label} selected={i === dayIndex} onPress={() => setDayIndex(i)} />
+          <Chip
+            key={d.key}
+            label={d.label}
+            selected={i === dayIndex}
+            onPress={() => setDayIndex(i)}
+          />
         ))}
       </ScrollView>
 
@@ -44,13 +50,20 @@ export default function ScheduleScreen() {
       ) : (
         <FlatList
           data={items}
-          keyExtractor={(i) => String(i.id)}
-          renderItem={({ item }) => <ScheduleRow item={item} now={data?.fetchedAt ?? 0} />}
+          keyExtractor={i => String(i.id)}
+          renderItem={({ item }) => (
+            <ScheduleRow item={item} now={data?.fetchedAt ?? 0} />
+          )}
           ItemSeparatorComponent={Separator}
           contentContainerStyle={styles.list}
           refreshing={false}
           onRefresh={reload}
-          ListEmptyComponent={<EmptyState title="Nothing airing" hint="No episodes are scheduled for this day." />}
+          ListEmptyComponent={
+            <EmptyState
+              title="Nothing airing"
+              hint="No episodes are scheduled for this day."
+            />
+          }
         />
       )}
     </Screen>
@@ -62,5 +75,5 @@ const styles = StyleSheet.create({
   chips: { flexGrow: 0, flexShrink: 0, marginVertical: Spacing.three },
   chipsContent: { gap: Spacing.two },
   separator: { height: Spacing.two },
-  list: { paddingBottom: BottomTabInset + Spacing.four, flexGrow: 1 },
+  list: { paddingBottom: Spacing.four, flexGrow: 1 },
 });
