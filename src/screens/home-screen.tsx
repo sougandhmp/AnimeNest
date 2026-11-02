@@ -18,7 +18,20 @@ import { GenreChips } from '@/features/anime/components/genre-chips';
 import { FeaturedCard } from '@/features/anime/components/featured-card';
 import { PosterRow } from '@/features/anime/components/poster-row';
 import { useHomeFeed } from '@/features/anime/hooks/use-home-feed';
-import { openGenre } from '@/lib/navigation';
+import { getCategory, type CategoryId } from '@/features/anime/categories';
+import { openCategory, openGenre } from '@/lib/navigation';
+
+/** Poster rows shown below the carousel, in display order (the carousel is "trending"). */
+const ROW_IDS: Exclude<CategoryId, 'trending'>[] = [
+  'airing',
+  'popularSeason',
+  'popular',
+  'topRated',
+  'topMovies',
+  'upcoming',
+  'recentlyFinished',
+];
+const ROWS = ROW_IDS.map(getCategory);
 
 export default function HomeScreen() {
   const { data, error, loading, fetching, reload } = useHomeFeed();
@@ -51,7 +64,10 @@ export default function HomeScreen() {
           ) : null}
 
           <View>
-            <SectionHeader title="Trending this season" />
+            <SectionHeader
+              title="Trending this season"
+              onSeeAll={() => openCategory('trending')}
+            />
             <FlatList
               horizontal
               pagingEnabled
@@ -84,15 +100,19 @@ export default function HomeScreen() {
             <GenreChips onSelect={openGenre} />
           </View>
 
-          <View>
-            <SectionHeader title="Top airing now" />
-            <PosterRow items={data.airing} />
-          </View>
-
-          <View>
-            <SectionHeader title="All-time popular" />
-            <PosterRow items={data.popular} ranked />
-          </View>
+          {ROWS.map(row => (
+            <View key={row.id}>
+              <SectionHeader
+                title={row.title}
+                onSeeAll={() => openCategory(row.id)}
+              />
+              <PosterRow
+                items={data[row.id as Exclude<CategoryId, 'trending'>]}
+                ranked={row.ranked}
+                hideRating={row.hideRating}
+              />
+            </View>
+          ))}
         </ScrollView>
       )}
     </Screen>
