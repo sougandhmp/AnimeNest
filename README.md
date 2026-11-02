@@ -1,6 +1,18 @@
-# Welcome to your Expo app 👋
+# AnimeNest
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+AnimeNest is a cross-platform mobile app (iOS, Android, web) for discovering anime. It uses the [AniList](https://anilist.co) API to browse anime lists and view anime details, and lets you build your own watch list.
+
+Built with [Expo](https://expo.dev), React Native and [Expo Router](https://docs.expo.dev/router/introduction).
+
+## Features
+
+- Browse anime lists powered by the [AniList GraphQL API](https://docs.anilist.co/)
+- View detailed information for each anime
+- Create and manage a personal watch list
+
+- **Bundle / package ID:** `com.smp.animenest`
+- **URL scheme:** `animenest://`
+- **Expo SDK:** 58
 
 ## Get started
 
@@ -10,47 +22,55 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Start the dev server
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Run on a device or simulator
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+The native `ios/` and `android/` folders are generated (Continuous Native Generation) and gitignored. Don't edit them by hand; configure native behavior in `app.json` and config plugins.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+| Command | What it does |
+| --- | --- |
+| `npm run ios` | Build and run on the iOS simulator |
+| `npm run android` | Build and run on an Android emulator or device |
+| `npm run web` | Start the web version |
+| `npm run lint` | Lint the project |
+| `npx tsc --noEmit` | Typecheck |
 
-## Get a fresh project
-
-When you're ready, run:
+To regenerate the native projects after changing `app.json`, icons or plugins:
 
 ```bash
-npm run reset-project
+npx expo prebuild --clean
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Project structure
 
-### Other setup steps
+```
+src/
+  app/          Routes (file-based routing; _layout.tsx defines navigators)
+  components/   Shared UI components
+  constants/    Theme and other constants
+  hooks/        Custom hooks
+assets/images/  App icon, adaptive icon, splash and favicon
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Keep non-route code outside `src/app/`.
+
+## Building and releasing
+
+Builds and updates are handled with [EAS](https://docs.expo.dev/eas/):
+
+```bash
+npx eas-cli@latest build
+npx eas-cli@latest submit
+npx eas-cli@latest update
+```
 
 ## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo documentation](https://docs.expo.dev/)
+- [Expo Router](https://docs.expo.dev/router/introduction)
+- [Development builds](https://docs.expo.dev/develop/development-builds/introduction/)
