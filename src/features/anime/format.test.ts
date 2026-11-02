@@ -40,6 +40,14 @@ describe('cleanDescription', () => {
     );
   });
 
+  it('turns markdown links into their label and drops spoiler markers', () => {
+    expect(
+      cleanDescription(
+        'Cared for [Fern](https://anilist.co/character/1/Fern). ~!Dies!~',
+      ),
+    ).toBe('Cared for Fern. Dies');
+  });
+
   it('has a fallback for missing text', () => {
     expect(cleanDescription(null)).toBe('No synopsis available.');
   });

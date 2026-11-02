@@ -14,6 +14,11 @@ export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabParamList> | undefined;
   AnimeDetail: { id: number };
   AnimeList: { category: CategoryId };
+  Character: { id: number };
+  Staff: { id: number };
+  Studio: { id: number };
+  Settings: undefined;
+  Trailer: { site: string; id: string; title: string };
 };
 
 declare global {

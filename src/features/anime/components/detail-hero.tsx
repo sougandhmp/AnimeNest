@@ -1,15 +1,13 @@
+import { openTrailer } from '@/lib/navigation';
+import { useTitle } from '@/features/settings/use-title';
 import { RemoteImage } from '@/components/ui/remote-image';
-import { Linking, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { Rating } from '@/components/ui/rating';
 import { Colors, Spacing } from '@/constants/theme';
-import {
-  displayTitle,
-  formatCountdown,
-  trailerUrl,
-} from '@/features/anime/format';
+import { formatCountdown, trailerUrl } from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
 
 const c = Colors.dark;
@@ -23,6 +21,7 @@ function Stat({ children }: { children: string }) {
 }
 
 export function DetailHero({ anime }: { anime: AnimeDetail }) {
+  const getTitle = useTitle();
   const rated = anime.rankings.find(r => r.type === 'RATED' && r.allTime);
   const popular = anime.rankings.find(r => r.type === 'POPULAR' && r.allTime);
   const trailer = trailerUrl(anime.trailer);
@@ -39,14 +38,14 @@ export function DetailHero({ anime }: { anime: AnimeDetail }) {
         />
         <View style={styles.info}>
           <ThemedText type="subtitle" style={styles.title} numberOfLines={4}>
-            {displayTitle(anime.title)}
+            {getTitle(anime.title)}
           </ThemedText>
           {trailer ? (
             <Button
               label="Watch Trailer"
               symbol={'play'}
               variant="outline"
-              onPress={() => Linking.openURL(trailer)}
+              onPress={() => openTrailer(anime.trailer, getTitle(anime.title))}
               style={styles.trailer}
             />
           ) : null}

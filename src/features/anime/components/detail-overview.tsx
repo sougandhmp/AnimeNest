@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { SectionHeader } from '@/components/ui/section-header';
+import { Chip } from '@/components/ui/chip';
 import { Tag } from '@/components/ui/tag';
 import { Colors, Spacing } from '@/constants/theme';
 import { InfoRow } from '@/features/anime/components/info-row';
@@ -13,10 +14,57 @@ import {
   formatLabel,
   formatScore,
   seasonLabel,
+  streamingLinks,
   titleCase,
 } from '@/features/anime/format';
 import type { AnimeDetail } from '@/features/anime/types';
-import { openGenre } from '@/lib/navigation';
+import { openGenre, openStudio } from '@/lib/navigation';
+
+function StudioRow({ anime }: { anime: AnimeDetail }) {
+  // Animation studios first; producers/licensors after.
+  const studios = [...anime.allStudios.nodes].sort(
+    (a, b) => Number(b.isAnimationStudio) - Number(a.isAnimationStudio),
+  );
+  return (
+    <View style={styles.studioRow}>
+      <ThemedText type="small" themeColor="textSecondary" style={styles.label}>
+        Studio
+      </ThemedText>
+      {studios.length === 0 ? (
+        <ThemedText type="small">—</ThemedText>
+      ) : (
+        <View style={styles.studios}>
+          {studios.slice(0, 6).map(st => (
+            <Tag key={st.id} onPress={() => openStudio(st.id)}>
+              {st.name}
+            </Tag>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+function WhereToWatch({ anime }: { anime: AnimeDetail }) {
+  const links = streamingLinks(anime.externalLinks);
+  if (links.length === 0) {
+    return null;
+  }
+  return (
+    <View style={styles.block}>
+      <SectionHeader title="Where to watch" />
+      <View style={styles.tags}>
+        {links.map(l => (
+          <Chip
+            key={l.id}
+            label={l.site}
+            onPress={() => Linking.openURL(l.url)}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
 
 export function DetailOverview({ anime }: { anime: AnimeDetail }) {
   const [expanded, setExpanded] = useState(false);
@@ -54,10 +102,7 @@ export function DetailOverview({ anime }: { anime: AnimeDetail }) {
 
       <View style={styles.block}>
         <SectionHeader title="Information" />
-        <InfoRow
-          label="Studio"
-          value={anime.studios.nodes.map(s => s.name).join(', ') || '—'}
-        />
+        <StudioRow anime={anime} />
         <InfoRow label="Season" value={season} />
         <InfoRow label="Format" value={formatLabel(anime.format) ?? '—'} />
         <InfoRow label="Episodes" value={anime.episodes?.toString() ?? '—'} />
@@ -80,11 +125,21 @@ export function DetailOverview({ anime }: { anime: AnimeDetail }) {
           }
         />
       </View>
+
+      <WhereToWatch anime={anime} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  studioRow: { flexDirection: 'row', gap: Spacing.two },
+  label: { width: 90 },
+  studios: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.one,
+  },
   section: { gap: Spacing.four },
   block: { gap: Spacing.two },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },

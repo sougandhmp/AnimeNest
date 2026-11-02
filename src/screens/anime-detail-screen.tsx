@@ -5,23 +5,35 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Share,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ThemedText } from '@/components/themed-text';
 import { Chip } from '@/components/ui/chip';
 import { Icon } from '@/components/ui/icon';
 import { ErrorState, Loading } from '@/components/ui/states';
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { DetailCharacters } from '@/features/anime/components/detail-characters';
+import { DetailReviews } from '@/features/anime/components/detail-reviews';
+import { DetailStaff } from '@/features/anime/components/detail-staff';
 import { DetailHero } from '@/features/anime/components/detail-hero';
 import { DetailOverview } from '@/features/anime/components/detail-overview';
 import { DetailRelated } from '@/features/anime/components/detail-related';
+import { useTitle } from '@/features/settings/use-title';
+import { formatAgo } from '@/lib/cache';
 import type { RootStackParamList } from '@/navigation/types';
 import { useAnimeDetail } from '@/features/anime/hooks/use-anime-detail';
 import { WatchlistMenu } from '@/features/watchlist/components/watchlist-menu';
 
 const c = Colors.dark;
-const TABS = ['Overview', 'Characters', 'Related'] as const;
+const TABS = ['Overview', 'Characters', 'Staff', 'Related', 'Reviews'] as const;
 type Tab = (typeof TABS)[number];
 
 function BackButton() {
@@ -42,9 +54,31 @@ function BackButton() {
   );
 }
 
+function ShareButton({ id, title }: { id: number; title: string }) {
+  const url = `https://anilist.co/anime/${id}`;
+  return (
+    <Pressable
+      onPress={() => Share.share({ message: `${title}\n${url}`, url, title })}
+      accessibilityRole="button"
+      accessibilityLabel="Share"
+      style={styles.share}
+    >
+      <Icon name="share" />
+    </Pressable>
+  );
+}
+
 export default function AnimeDetailScreen() {
   const { params } = useRoute<RouteProp<RootStackParamList, 'AnimeDetail'>>();
-  const { data: anime, error, loading, reload } = useAnimeDetail(params.id);
+  const getTitle = useTitle();
+  const {
+    data: anime,
+    error,
+    loading,
+    fetching,
+    reload,
+    updatedAt,
+  } = useAnimeDetail(params.id);
   const [tab, setTab] = useState<Tab>('Overview');
 
   if (!anime) {
@@ -67,22 +101,37 @@ export default function AnimeDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        refreshControl={
+          <RefreshControl
+            refreshing={fetching}
+            onRefresh={reload}
+            tintColor={c.accent}
+          />
+        }
+      >
         <View style={styles.banner}>
           <RemoteImage
             uri={anime.bannerImage ?? anime.coverImage.extraLarge}
             style={StyleSheet.absoluteFill}
           />
           <View style={[StyleSheet.absoluteFill, styles.scrim]} />
-          <SafeAreaView edges={['top']}>
+          <SafeAreaView edges={['top']} style={styles.bannerBar}>
             <BackButton />
+            <ShareButton id={anime.id} title={getTitle(anime.title)} />
           </SafeAreaView>
         </View>
 
         <View style={styles.body}>
           <DetailHero anime={anime} />
           <WatchlistMenu anime={anime} />
-          <View style={styles.tabs}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tabsScroll}
+            contentContainerStyle={styles.tabs}
+          >
             {TABS.map(t => (
               <Chip
                 key={t}
@@ -91,14 +140,28 @@ export default function AnimeDetailScreen() {
                 onPress={() => setTab(t)}
               />
             ))}
-          </View>
+          </ScrollView>
           {tab === 'Overview' ? (
             <DetailOverview anime={anime} />
           ) : tab === 'Characters' ? (
             <DetailCharacters anime={anime} />
-          ) : (
+          ) : tab === 'Staff' ? (
+            <DetailStaff anime={anime} />
+          ) : tab === 'Related' ? (
             <DetailRelated anime={anime} />
+          ) : (
+            <DetailReviews anime={anime} />
           )}
+          {updatedAt ? (
+            <ThemedText
+              type="small"
+              themeColor="textSecondary"
+              style={styles.updated}
+            >
+              {error ? 'Offline · showing saved data from ' : 'Updated '}
+              {formatAgo(updatedAt)}
+            </ThemedText>
+          ) : null}
         </View>
       </ScrollView>
     </View>
@@ -126,5 +189,13 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     marginTop: -70,
   },
-  tabs: { flexDirection: 'row', gap: Spacing.two },
+  tabsScroll: { flexGrow: 0, flexShrink: 0 },
+  tabs: { gap: Spacing.two },
+  bannerBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  share: { padding: Spacing.three },
+  updated: { textAlign: 'center', marginTop: Spacing.two },
 });
