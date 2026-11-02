@@ -19,8 +19,12 @@ Built with React Native (CLI) and React Navigation.
 - **Genre browsing:** genre chips on Home and Search, and tappable genre tags on the detail screen
 - **Search:** debounced search with All Types, TV, Movie and Top Rated filters, combinable with a genre
 - **Details:** banner, score, rank, synopsis, genres and info, with Overview, Characters (Japanese voice actors, recommendations) and Related tabs
-- **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, and track episode progress. Stored on the device (MMKV)
-- **Profile:** simple stats from your watchlist
+- **Watchlist:** add anime in one tap, set Watching / Plan to Watch / Completed, track episode progress, give your own 1-10 score and a private note, and sort by recently added, A-Z, score or progress. Stored on the device (MMKV)
+- **Profile and stats:** titles, episodes and estimated time watched, your mean score, status counts and your top genres
+- **Detail extras:** staff and studio pages, character and voice-actor pages, user reviews, where to watch (streaming links), an in-app trailer player and a share button
+- **Search extras:** recent searches, advanced filters (sort, status, season, year) and a "Surprise me" button on Home
+- **Offline cache:** Home, schedule, detail pages and "See all" lists are saved on the device, shown instantly and still available without a connection, with an "Updated ... ago" note
+- **Settings:** title language (English, Romaji or Native), clear cached data, clear search history, delete watchlist
 - Dark theme, pull to refresh, loading / error / empty states
 
 ## Tech stack
@@ -28,7 +32,7 @@ Built with React Native (CLI) and React Navigation.
 - React Native 0.88 (CLI, bare workflow), React 19, TypeScript
 - React Navigation (native stack and bottom tabs)
 - AniList GraphQL API (`https://graphql.anilist.co`), no API key needed
-- `react-native-mmkv` for the on-device watchlist, `react-native-svg` for icons
+- `react-native-mmkv` for the watchlist, settings and offline cache, `react-native-svg` for icons, `react-native-webview` for trailers
 
 > The original Expo version of this app is kept on the [`expo`](../../tree/expo) branch.
 
@@ -79,9 +83,11 @@ src/
     anime/                AniList API client and queries, types, formatters,
                           data hooks and anime components
     schedule/             Airing schedule query, day grouping, hook and row
-    watchlist/            MMKV storage, store, hooks and watchlist components
+    watchlist/            Store, sorting, stats, hooks and watchlist components
+    search/               Recent-search history
+    settings/             Settings store and title-language hook
   hooks/                  Generic hooks (use-async, use-debounced-value, use-theme)
-  lib/navigation.ts       openAnime / openGenre helpers
+  lib/                    navigation helpers, MMKV storage, persisted stores, offline cache
   constants/theme.ts      Colors and spacing
 ios/, android/            Native projects (committed)
 docs/screenshots/         README screenshots
