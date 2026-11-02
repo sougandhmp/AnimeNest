@@ -1,18 +1,39 @@
 import type { AnimeSummary, Title } from '@/features/anime/types';
 
+export type TitleLanguageKey = 'english' | 'romaji' | 'native';
+
+/** Pick a title in the preferred language, falling back to whatever exists. */
+export function pickTitle(
+  title: Title,
+  language: TitleLanguageKey = 'english',
+): string {
+  const order: Record<TitleLanguageKey, (string | null | undefined)[]> = {
+    english: [title.english, title.romaji, title.native],
+    romaji: [title.romaji, title.english, title.native],
+    native: [title.native, title.romaji, title.english],
+  };
+  return order[language].find(Boolean) ?? 'Untitled';
+}
+
 export function displayTitle(title: Title): string {
-  return title.english ?? title.romaji ?? 'Untitled';
+  return pickTitle(title, 'english');
 }
 
 export function cleanDescription(html: string | null): string {
   if (!html) return 'No synopsis available.';
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&#039;/g, "'")
-    .trim();
+  return (
+    html
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+      // Markdown links: [label](url) -> label
+      .replace(/\[([^\]]+)\]\((?:https?:\/\/)[^)\s]*\)/g, '$1')
+      // AniList spoiler markers: ~!hidden!~
+      .replace(/~!|!~/g, '')
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .replace(/&#039;/g, "'")
+      .trim()
+  );
 }
 
 export function formatLabel(format: string | null): string | null {
@@ -108,4 +129,46 @@ export const GENRES = [
 export function formatScore(score: number | null | undefined): string | null {
   if (!score) return null;
   return (score / 10).toFixed(1);
+}
+
+/** URL that plays a trailer inside a WebView, or null for unsupported sites. */
+export function trailerEmbedUrl(site: string, id: string): string | null {
+  if (site === 'youtube') {
+    return `https://www.youtube.com/embed/${id}?playsinline=1&autoplay=1&rel=0`;
+  }
+  if (site === 'dailymotion') {
+    return `https://www.dailymotion.com/embed/video/${id}?autoplay=1`;
+  }
+  return null;
+}
+
+/** Only streaming links, one per site, in the order AniList returns them. */
+export function streamingLinks<T extends { site: string; type: string | null }>(
+  links: T[],
+): T[] {
+  const seen = new Set<string>();
+  return links.filter(l => {
+    if (l.type !== 'STREAMING' || seen.has(l.site)) return false;
+    seen.add(l.site);
+    return true;
+  });
+}
+
+/**
+ * YouTube rejects embeds that send no referrer (error 153), so the player is loaded
+ * from a tiny HTML page whose base URL is derived from the app's bundle id, as
+ * YouTube recommends for mobile apps.
+ */
+export const TRAILER_BASE_URL = 'https://com.smp.animenest';
+
+export function trailerEmbedHtml(
+  site: string,
+  id: string,
+): { html: string; baseUrl: string } | null {
+  const src = trailerEmbedUrl(site, id);
+  if (!src) {
+    return null;
+  }
+  const html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:#000}iframe{border:0;width:100%;height:100%}</style></head><body><iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></body></html>`;
+  return { html, baseUrl: TRAILER_BASE_URL };
 }

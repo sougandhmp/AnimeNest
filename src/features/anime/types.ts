@@ -1,4 +1,8 @@
-export type Title = { romaji: string | null; english: string | null };
+export type Title = {
+  romaji: string | null;
+  english: string | null;
+  native?: string | null;
+};
 
 export type AnimeSummary = {
   id: number;
@@ -11,6 +15,7 @@ export type AnimeSummary = {
   bannerImage: string | null;
   averageScore: number | null;
   episodes: number | null;
+  duration: number | null;
   format: string | null;
   status: string | null;
   season: string | null;
@@ -48,6 +53,7 @@ export type Recommendation = {
     id: number;
     title: Title;
     coverImage: { large: string | null };
+    averageScore: number | null;
   } | null;
 };
 
@@ -57,7 +63,34 @@ export type NextAiring = {
   timeUntilAiring: number;
 };
 
+export type ExternalLink = {
+  id: number;
+  url: string;
+  site: string;
+  type: string | null;
+};
+
+export type StaffEdge = {
+  role: string | null;
+  node: { id: number; name: { full: string }; image: { large: string | null } };
+};
+
+export type Review = {
+  id: number;
+  summary: string | null;
+  score: number | null;
+  rating: number | null;
+  ratingAmount: number | null;
+  user: { name: string; avatar: { medium: string | null } | null } | null;
+};
+
 export type AnimeDetail = AnimeSummary & {
+  allStudios: {
+    nodes: { id: number; name: string; isAnimationStudio: boolean }[];
+  };
+  staff: { edges: StaffEdge[] };
+  externalLinks: ExternalLink[];
+  reviews: { nodes: Review[] };
   nextAiringEpisode: NextAiring | null;
   title: Title & { native: string | null };
   source: string | null;

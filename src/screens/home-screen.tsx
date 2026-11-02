@@ -17,6 +17,7 @@ import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { GenreChips } from '@/features/anime/components/genre-chips';
 import { FeaturedCard } from '@/features/anime/components/featured-card';
 import { PosterRow } from '@/features/anime/components/poster-row';
+import { SurpriseButton } from '@/features/anime/components/surprise-button';
 import { useHomeFeed } from '@/features/anime/hooks/use-home-feed';
 import { getCategory, type CategoryId } from '@/features/anime/categories';
 import { openCategory, openGenre } from '@/lib/navigation';
@@ -99,6 +100,8 @@ export default function HomeScreen() {
             <SectionHeader title="Browse by genre" />
             <GenreChips onSelect={openGenre} />
           </View>
+
+          <SurpriseButton />
 
           {ROWS.map(row => (
             <View key={row.id}>
